@@ -1,9 +1,5 @@
 # Contans the logic for the menu
 import os
-import time 
-
-def wait(seconds):
-    time.sleep(seconds)
 
 def pause():
     input("\nPress any key to continue...")
@@ -16,8 +12,16 @@ def clear_screen():
     else:
         os.system('clear')
 
-def loading_data():
-    print("Loading the data from previous exported")
+def display_message(tag, message, do_pause=False):
+    print(f"""
+                
+            {tag}
+            {message}
+                
+            """)
+    if do_pause:
+        pause()
+
 
 def request_grade(message):
     grade = 0
@@ -28,12 +32,7 @@ def request_grade(message):
                 raise ValueError
             return grade
         except ValueError:
-            print("""
-                
-                WARNING
-                The grade must be a value from [0,100] both inclusive
-                
-            """)
+            display_message('WARNING', 'The grade must be a value from [0,100] both inclusive')
 
 
 def display_main_menu():
@@ -57,13 +56,8 @@ def display_main_menu():
                 raise ValueError
             try_again = False
         except ValueError as valueError:
-            print("""
-                
-                WARNING
-                The value must be an option from [1,7] both inclusive
-                
-            """)
-            wait(3)
+            display_message('WARNING','the value must be an option from [1,7] both inclusive')
+            pause()
     return option
 
 def register_student():
@@ -77,8 +71,8 @@ def register_student():
     section = input("Section: ")
     grade_in_spanish = request_grade("Grade in Spanish: ")
     grade_in_english = request_grade("Grade in English: ")
-    grade_in_social_studies= request_grade("Grade in Social Studies: ")
     grade_in_science = request_grade("Grade in Science: ")
+    grade_in_social_studies= request_grade("Grade in Social Studies: ")
 
     student_info = {
         "Full Name": full_name,
@@ -88,6 +82,8 @@ def register_student():
         "Grade in Science": grade_in_science,
         "Grade in Social Studies": grade_in_social_studies
     }
+
+    pause()
 
     return student_info
 
@@ -109,28 +105,29 @@ def display_all_students(student_list):
 
 def display_top_3_students(student_list):
     menu = """
-            TOP 3 BEST STUDENTS AVARGE
+            TOP 3 BEST STUDENTS AVERAGE
     """
     clear_screen()
     print(menu)
 
-    print(f"{'Full Name':<20} {'Section':<8} {'Avarage':<8}")
+    print(f"{'Full Name':<20} {'Section':<8} {'Average':<8}")
     print("-" * 40)
 
-    for student_info in student_list:
-        print(f"{student_info['Full Name']:<20} {student_info['Section']:<8} {student_info['Avarage']:<8}")
+    for index, student_info in enumerate(student_list):
+        pos = index + 1
+        print(f"{pos} | {student_info['Full Name']:<20} {student_info['Section']:<8} {student_info['Average']:<6.1f}")
 
     pause()
 
-def display_avarage_of_all_avarage(avarage):
+def display_average_of_all_average(Average):
     menu = """
-            AVARGE FROM ALL STUDENTS AVARAGE
+            AVARGE FROM ALL STUDENTS AVERAGE
     """
     clear_screen()
     print(menu)
 
-    print(f"{'Avarage':<8}")
+    print(f"{'Average':<8}")
     print("-" * 20)
-    print(avarage)
+    print(Average)
 
     pause()
