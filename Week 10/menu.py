@@ -1,6 +1,6 @@
 # Contans the logic for the menu
 import os
-import time
+import time 
 
 def wait(seconds):
     time.sleep(seconds)
