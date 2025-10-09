@@ -53,7 +53,7 @@ Usando dumps para crear un JSON string a partir de un objecto python
     
         dict_of_pokemon.append(new_pokemon)
     
-        json_string = json.dumps(dict_of_pokemon)
+        json_string = json.dumps(dict_of_pokemon, indent=4)
     
         write_file(file_path, json_string)
     ```
