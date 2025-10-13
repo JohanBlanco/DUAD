@@ -43,7 +43,7 @@ def display_main_menu():
             1. Register a Student.
             2. List all students.
             3. List The Top 3 Best Avarge Students
-            4. Show the avaragre of all students avarge
+            4. Show the avaragre of all students avarage
             5. Export Data to Csv
             6. Import Data from previous exported Csv
             7. Exit
