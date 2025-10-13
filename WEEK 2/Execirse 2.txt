@@ -1,0 +1,32 @@
+## 2. Pseudocódigo para evaluar tiempo en segundos
+
+**Descripción:** Se pide un `tiempo en segundos` al usuario y calcula si es menor, mayor o igual a 10 minutos.  
+- Si es menor, muestra cuántos segundos faltan para 10 minutos.  
+- Si es mayor, muestra "Mayor".  
+- Si es igual, muestra "Igual".
+
+**Ejemplos:**  
+- 1040 → Mayor  
+- 140 → 460  
+- 600 → Igual  
+- 599 → 1
+
+**Respuesta en pseudocódigo:**
+
+```
+Inicio
+
+1. Definir diez_minutos = 600
+2. Definir tiempo_en_segundos
+3. Mostrar “Ingrese el tiempo en segundos”
+4. Pedir tiempo_en_segundos
+5. Si (tiempo_en_segundos > diez_minutos), entonces
+       Mostrar “Mayor”
+   Sino, Si (tiempo_en_segundos == diez_minutos) entonces
+       Mostrar “Igual”
+   Sino
+       Mostrar diez_minutos - tiempo_en_segundos
+FinSi
+
+Fin
+

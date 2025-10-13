@@ -1,0 +1,25 @@
+## 2. Convertir velocidad km/h a m/s
+
+**Descripción:** Se pide una velocidad en km/h y la convierte a m/s.  
+**Nota:** `1 km = 1000 m`, `1 hora = 3600 s`
+
+**Ejemplos:**  
+- 73 → 20.27  
+- 50 → 13.88  
+- 120 → 33.33
+
+**Respuesta en pseudocódigo:**
+
+```
+Inicio
+
+1. Definir velocidad_km_h
+2. Comentar “1 km/h equivale a 1000/(60*60) m/s”
+3. Definir metros_por_segundo = 1000/(60*60)
+4. Mostrar “Ingrese la velocidad en km/h: ”
+5. Pedir velocidad_km_h
+6. Definir resultado = velocidad_km_h * metros_por_segundo 
+7. Mostrar resultado
+
+Fin
+```

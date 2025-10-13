@@ -1,0 +1,23 @@
+
+# 💪🏽 Ejercicios
+
+## 1. Experimente haciendo sumas entre distintos tipos de datos
+
+1. Si le salen errores, **no se asuste.** Lealos e intente comprender qué significan.  
+   *Los errores son oportunidades de aprendizaje.*
+2. Por ejemplo:
+    - `string + string → ?`  
+      **Respuesta:** Todo bien
+    - `string + int → ?`  
+      **Respuesta:** No se puede, solo se pueden concatenar 2 strings o sumar 2 enteros, por lo que hay que castear el int a un string con la función `str()`.
+    - `int + string → ?`  
+      **Respuesta:** No se puede, solo se pueden concatenar 2 strings o sumar 2 enteros, por lo que hay que castear el int a un string con la función `str()`.
+    - `list + list → ?`  
+      **Respuesta:** Concatena las listas en 1 sola
+    - `string + list → ?`  
+      **Respuesta:** No se puede, solo se pueden concatenar 2 strings o 2 listas.
+    - `float + int → ?`  
+      **Respuesta:** Todo bien
+    - `bool + bool → ?`  
+      **Respuesta:** Toma los True como 1 y los False como 0, y los suma
+

@@ -1,0 +1,36 @@
+
+# 💡 Ejercicios
+
+## 1. Pseudocódigo para calcular descuento de producto
+
+**Descripción:** Se pide un `precio de producto` al usuario, calcula su descuento y muestra el precio final.  
+- Si el precio es menor a 100, el descuento es del 2%.  
+- Si el precio es mayor o igual a 100, el descuento es del 10%.
+
+**Ejemplos:**  
+- 120 → 108  
+- 40 → 39.2
+
+**Respuesta en pseudocódigo:**
+
+```
+Inicio
+
+1. Definir descuento = 0
+2. Definir precio_de_producto
+3. Mostrar “Ingrese el precio del producto”
+4. Pedir precio_de_producto
+5. Si (precio_de_producto < 100), entonces
+    1. descuento = precio_de_producto * 0.02
+   Sino
+    1. descuento = precio_de_producto * 0.10
+FinSi
+6. Definir total = precio_de_producto - descuento
+7. Mostrar “Su precio a pagar es de ”
+8. Mostrar total
+9. Mostrar “Con un descuento de ”
+10. Mostrar descuento
+
+Fin
+```
+
