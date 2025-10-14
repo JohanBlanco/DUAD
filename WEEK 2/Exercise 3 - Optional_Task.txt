@@ -1,0 +1,34 @@
+## 3. Porcentaje de mujeres y hombres
+
+**Descripción:** Se pide el sexo de 6 personas (1 = mujer, 2 = hombre) y se muestra el porcentaje de mujeres y hombres.
+
+**Ejemplos:**  
+- 1, 1, 1, 2, 2, 2 → 50% mujeres y 50% hombres  
+- 1, 1, 2, 2, 2, 2 → 33.3% mujeres y 66.6% hombres  
+- 1, 1, 1, 1, 1, 2 → 83.3% mujeres y 16.6% hombres
+
+**Respuesta en pseudocódigo:**
+
+```
+Inicio
+
+1. Definir sexo
+2. Definir contador = 0
+3. Definir porcentaje_mujeres = 0
+4. Definir porcentaje_hombres = 0
+5. Mientras (contador < 6):
+    1. Mostrar “Ingrese el sexo: ”
+    2. Pedir sexo
+    3. Si (sexo == 1):
+        1. porcentaje_mujeres = porcentaje_mujeres + 1
+       Sino, si (sexo == 2):
+        1. porcentaje_hombres = porcentaje_hombres + 1
+    FinSi
+    4. contador = contador + 1
+FinMientras
+6. porcentaje_mujeres = porcentaje_mujeres / 6
+7. porcentaje_hombres = porcentaje_hombres / 6
+8. Mostrar porcentaje_hombres   
+9. Mostrar porcentaje_mujeres
+
+Fin

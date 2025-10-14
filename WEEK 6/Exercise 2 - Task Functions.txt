@@ -1,0 +1,19 @@
+1. Experimente con el concepto de scope:
+    1. Intente accesar a una variable definida dentro de una función desde afuera.
+        
+        Respuesta: No es posible
+        
+        ```python
+        def new_function():
+            local_var = 10
+        
+        print(local_var)
+        ```
+        
+    
+    Traceback (most recent call last):
+    File "c:\Users\blajo\OneDrive\Documentos\Python\[test.py](http://test.py/)", line 4, in <module>
+    print(local_var)
+    ^^^^^^^^^
+    
+   

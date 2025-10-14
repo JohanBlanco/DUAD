@@ -1,0 +1,34 @@
+## 2. Algoritmo que describe su rutina diaria
+
+**Inicio**
+
+1. Despertar a las 5:00am.
+2. Quitar la alarma.
+3. Hacer la cama.
+4. Mientras esté despierto:
+    1. Dar de comer a los perros.
+    2. Bañarse.
+    3. Hacer desayuno.
+    4. Desayunar.
+    5. Lavarse los dientes.
+    6. Encender la PC.
+    7. Seguir aprendiendo en Lyfter.
+    8. Mientras esté aprendiendo en Lyfter y haya luz y haya internet:
+        1. Ver la hora.
+        2. Si son las 9:30am:
+            1. Merendar por 15min.
+        3. Sino, si son las 10:55am:
+            1. Break de 5 min.
+        4. Sino, si son las 12:00md:
+            1. Almorzar por 1hr.
+        5. Sino, si son las 2:00pm:
+            1. Terminar el aprendizaje en Lyfter por hoy.
+9. Bañarse.
+10. Alistarse para el gym.
+11. Ir al Gym y entrenar.
+12. Irse para la casa.
+13. Bañarse.
+14. Comer.
+15. Dormir.
+
+**Fin**
