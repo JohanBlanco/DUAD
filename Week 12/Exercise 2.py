@@ -13,8 +13,12 @@ class Shape(ABC):
 
 class Circle(Shape):
 
-    def __init__(self, radius):
+    def __init__(self, radius: float):
         super().__init__()
+
+        if radius < 0:
+            raise ValueError("The radius can not be negative")
+        
         self.radius = radius
 
     def calculate_perimeter(self):
@@ -25,8 +29,12 @@ class Circle(Shape):
 
 class Square(Shape):
 
-    def __init__(self, side_length):
+    def __init__(self, side_length:float):
         super().__init__()
+
+        if side_length < 0:
+            raise ValueError("The side length can not be negative")
+
         self.side_length = side_length
 
     def calculate_perimeter(self):
@@ -39,6 +47,10 @@ class Rectangle(Shape):
 
     def __init__(self, length, width):
         super().__init__()
+
+        if length < 0 or width < 0:
+            raise ValueError("The values can not be negative")
+
         self.length = length
         self.width = width
 
