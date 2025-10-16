@@ -24,8 +24,8 @@ if __name__ == '__main__':
     bank_account = BankAccount()
     bank_account.withdraw_money(5)
 
+    savings_account = SavingsAccount(5)
     try:
-        savings_account = SavingsAccount(5)
         savings_account.add_money(7)
         savings_account.withdraw_money(5)
     except Exception as e:
