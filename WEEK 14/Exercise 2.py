@@ -22,6 +22,7 @@ class DoubleEndedQueue:
     def push_right(self, data):
         new_node = Node(data=data)
         if self.tail is not None:
+            self.tail.next = new_node
             new_node.previous = self.tail
             self.tail = new_node
         else:
@@ -35,6 +36,7 @@ class DoubleEndedQueue:
     def pop_right(self):
         if self.tail is not None:
             self.tail = self.tail.previous
+            self.tail.next = None
 
     def print_structure(self):
         string = '['
@@ -78,3 +80,5 @@ if __name__ == '__main__':
     queue.print_structure()
     queue.pop_left()
     queue.print_structure()
+    queue.pop_right()
+    queue.pop_left()
