@@ -11,11 +11,11 @@ class User:
         current_month = datetime.today().month
 
         birth_year = self.date_of_birth.year
-        birth_moth = self.date_of_birth.month
+        birth_month = self.date_of_birth.month
 
         age = current_year - birth_year
 
-        if current_month < birth_moth:
+        if current_month < birth_month:
             age -= 1
 
         return age
@@ -24,19 +24,20 @@ def only_adults(func):
         def wrapper(user:User):
             age = user.age
             if age < 18:
-                raise ValueError(f'The user must be an adult, and you are {age} y.o')
-            func(User)
+                raise ValueError(f'The user must be an adult, and you are {age} y.o\n')
+            return func(user)
         return wrapper
 
 @only_adults
 def buy_drugs(user:User):
-    print('Your order number is AQWE12321')
+    print(f"User Age: {user.age}")
+    print('Your order number is AQWE12321\n')
 
 
 if __name__ == '__main__':
-    buy_drugs(User('12/10/1999'))
+    buy_drugs(User('10/12/1999'))
 
     try:
-        buy_drugs(User('12/10/2009'))
+        buy_drugs(User('10/10/2009'))
     except ValueError as e:
         print(e)
