@@ -10,14 +10,24 @@ class Stack:
     def push(self,data):
         new_node = Node(data=data)
         if self.head is not None:
-            new_node.next = self.head
-            self.head = new_node
+            current_node = self.head
+            while current_node.next is not None:
+                current_node = current_node.next
+
+            current_node.next = new_node
         else:
             self.head = new_node
 
     def pop(self):
         if self.head is not None:
-            self.head = self.head.next
+            if self.head.next is None:
+                self.head = None
+            else:
+                current_node = self.head
+                while current_node.next.next is not None:
+                    current_node = current_node.next
+
+                current_node.next = None
 
     def print_stack(self):
         string = '['
