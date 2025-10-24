@@ -1,0 +1,2 @@
+import pytest
+from week_6.exercise_5_task_functions import revert_string
