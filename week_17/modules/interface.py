@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 import PySimpleGUI as sg
 from typing import Dict, List
 
@@ -26,39 +26,67 @@ def display_main_window():
     window.close()
     return event, values
 
-def display_transactions(data_table):
-    title = 'Finance Manager - Transactions'
+def create_row_colors_list(transaction_list):
+    row_colors = []
 
-    heading = ["Date", "Tile", "Amount", 'Category', 'Type']
+    for row_number, transaction in enumerate(transaction_list):
+        row_color = transaction.category.color.lstrip('#')
+        r, g, b = [int(row_color[i:i+2], 16) for i in (0, 2, 4)]
 
-    layout = [
-        [
-            sg.Button('Back to Menu', key='back', button_color=('white', 'red'), bind_return_key=True),
-            sg.Push(),
-            sg.Column([
-                [
-                    sg.InputText('', key='from_date_input', size=(9, 1), disabled=True, enable_events=True),
-                    sg.CalendarButton('From', key='from_picker', target='from_date_input', format='%m/%d/%Y'),
-                    sg.InputText('', key='to_date_input', size=(9, 1), disabled=True, enable_events=True),
-                    sg.CalendarButton('To', key='to_picker', target='to_date_input', format='%m/%d/%Y'),
-                    sg.Button('Filter', key='filter'),
-                    sg.Button('Clear Filter', key='clear_filter')
-                ]
-            ], element_justification='right', expand_x=True)
-        ],
-        [
-            sg.Column([
-                [sg.Table(values=data_table, headings=heading, key='table')]
-            ], element_justification='center', expand_x=True)
+        # Calculate brightness (W3C formula)
+        brightness = (0.299 * r + 0.587 * g + 0.114 * b)
+
+        # Choose text color based on brightness
+        text_color = '#000000' if brightness > 127 else '#FFFFFF'
+
+        row_color_info = (row_number, text_color, f'#{row_color}')
+        row_colors.append(row_color_info)
+
+    return row_colors
+
+def display_transactions(data_table, transaction_list):
+    if len(data_table) != 0:
+        row_colors = create_row_colors_list(transaction_list)
+
+        title = 'Finance Manager - Transactions'
+
+        heading = ["Date", "Tile", "Amount", 'Category', 'Type']
+
+        table = sg.Table(values=data_table, headings=heading, key='table')
+
+        if len(row_colors) == len(data_table) and len(row_colors) !=0:
+            table = sg.Table(values=data_table, headings=heading, key='table', row_colors=row_colors)
+
+
+        layout = [
+            [
+                sg.Button('Back to Menu', key='back', button_color=('white', 'red'), bind_return_key=True),
+                sg.Push(),
+                sg.Column([
+                    [
+                        sg.InputText('', key='from_date_input', size=(9, 1), disabled=True, enable_events=True),
+                        sg.CalendarButton('From', key='from_picker', target='from_date_input', format='%m/%d/%Y'),
+                        sg.InputText('', key='to_date_input', size=(9, 1), disabled=True, enable_events=True),
+                        sg.CalendarButton('To', key='to_picker', target='to_date_input', format='%m/%d/%Y'),
+                        sg.Button('Filter', key='filter'),
+                        sg.Button('Clear Filter', key='clear_filter')
+                    ]
+                ], element_justification='right', expand_x=True)
+            ],
+            [
+                sg.Column([[table]], element_justification='center', expand_x=True)
+            ]
         ]
-    ]
 
 
-    window = sg.Window(title, layout)
+        window = sg.Window(title, layout)
 
-    do_filter_table_logic(data_table,window)
+        do_filter_table_logic(data_table,window)
 
-    window.close()
+        window.close()
+    else:
+        sg.popup_error('The are 0 transactions in the sistem yet', title='Error')
+
 
 def display_add_transaction_window(category_list, transaction_type:str):
     if len(category_list) != 0:
@@ -98,13 +126,45 @@ def display_add_transaction_window(category_list, transaction_type:str):
 
         window = sg.Window(title, layout, element_justification='center')
 
-        info = get_validated_transaction_info(window, category_list, transaction_type)
+        info = get_validated_transaction_info(window, transaction_type)
 
         window.close()
 
         return info
     else:
         sg.popup_error('Add a at least 1 category before adding a transaction', title='Error')
+
+def get_validated_transaction_info(window, transaction_type):
+    # Validations
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'cancel':
+            window.close()
+            raise WindowsError(f"The window {window.Title} was closed or canceled")
+
+        info = {
+            'type': transaction_type,
+            "title": values['title'],
+            "category": values['category'],
+            "date": values['date_input'],
+            "amount": values['amount']
+        }
+
+
+        if event == 'amount':
+            numeric_list = [info[event]]
+            if not are_all_elements_numeric(numeric_list):
+                sg.popup_error('The amount must be a numeric value, for decimals use the dot symbol', title='Error')
+                window[event].update('')
+        if event == 'date_input':
+            if not is_date_before_or_equals_today(info['date']):
+                sg.popup_error(f'The date can not be in the future', title='Error')
+                window[event].update('')
+        elif event == 'add':
+            if is_there_an_empty_field(info):
+                sg.popup_error('All fields are mandatory', title='Error')
+            else:
+                return info
 
 def display_add_category_window():
     title = 'Finance Manager - Add Category'
@@ -154,39 +214,6 @@ def display_add_category_window():
                 window.close()
                 return info
 
-def get_validated_transaction_info(window, category_list, transaction_type):
-    # Validations
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'cancel':
-            window.close()
-            raise WindowsError(f"The window {window.Title} was closed or canceled")
-
-        info = {
-            'type': transaction_type,
-            "title": values['title'],
-            "category": values['category'][0],
-            "date": values['date_input'],
-            "amount": values['amount']
-        }
-
-
-        if event == 'amount':
-            numeric_list = [info[event]]
-            if not are_all_elements_numeric(numeric_list):
-                sg.popup_error('The amount must be a numeric value, for decimals use the dot symbol', title='Error')
-                window[event].update('')
-        if event == 'date_input':
-            if not is_date_before_or_equals_today(info['date']):
-                sg.popup_error(f'The date can not be in the future', title='Error')
-                window[event].update('')
-        elif event == 'add':
-            if is_there_an_empty_field(info):
-                sg.popup_error('All fields are mandatory', title='Error')
-            else:
-                return info
-
-
 def is_there_an_empty_field(fields:Dict):
     return_value = False
 
@@ -196,7 +223,6 @@ def is_there_an_empty_field(fields:Dict):
             break
 
     return return_value
-
 
 def are_all_elements_numeric(numeric_list:List):
     return_value = True

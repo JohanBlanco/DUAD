@@ -30,3 +30,15 @@ class Transaction:
         # now unpack safely
         return cls(**data)
 
+    def to_matrix(self):
+        transaction_dict =  self.to_dict()
+        transaction_dict['category'] = self.category.to_matrix()
+
+        return [
+            transaction_dict['date'],
+            transaction_dict['title'],
+            transaction_dict['amount'],
+            transaction_dict['category'],
+            transaction_dict['type'],
+        ]
+
