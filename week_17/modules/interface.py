@@ -6,7 +6,18 @@ from typing import Dict, List
 def get_win_closed():
     return sg.WIN_CLOSED
 
-def display_main_window(data_table, category_matrix, category_list):
+def read_from_window(window):
+    event, values = window.read()
+    return event, values
+
+def display_notification(message):
+    sg.popup_notify(message)
+
+def update_table(window, key, data, category_list):
+    row_colors = create_row_colors_list(data, category_list)
+    window[key].update(values=data, row_colors=row_colors)
+
+def start_main_window(data_table, category_list):
     title = 'Finance Manager'
 
     # MENU
@@ -53,33 +64,9 @@ def display_main_window(data_table, category_matrix, category_list):
             sg.Column(right_layout, element_justification='center')
         ]
     ]
-
     window = sg.Window(title, layout)
-    info = {}
 
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'Exit' or event == 'Export to CSV':
-            break
-
-        # MENU CASES
-        if event == 'Add Expense':
-            info = disable_window_and_popup_another(window, display_add_transaction_window, category_matrix, 'Expense')
-            break
-        elif event == 'Add Income':
-            info = disable_window_and_popup_another(window, display_add_transaction_window, category_matrix, 'Income')
-            break
-        elif event == 'Add Category':
-            info = disable_window_and_popup_another(window, display_add_category_window)
-            break
-        else:
-            # TABLE CASES
-            do_filter_table_logic(event, values, window, data_table, category_list)
-
-    return event, info, window
-
-def display_notification(message):
-    sg.popup_notify(message)
+    return window
 
 def display_error(error):
     sg.popup_error(error)
@@ -89,8 +76,13 @@ def close_window(window):
 
 def disable_window_and_popup_another(window, func, *args, **kwargs):
     window.disable()
-    result = func(*args, **kwargs)
-    window.enable()
+    try:
+        result = func(*args, **kwargs)
+        window.enable()
+    # The window was closed or canceled
+    except WindowsError as e:
+        window.enable()
+        raise e
     return result
 
 def create_row_colors_list(data_table, category_list):
@@ -329,13 +321,15 @@ def do_filter_table_logic(event, values, window, data_table, category_list):
             window[event].update('')
 
     elif event == 'filter' and len(from_date_string) > 0 and len(to_date_string) > 0:
-        filtered_data = data_table.copy()
         from_date = string_to_date(from_date_string)
         to_date = string_to_date(to_date_string)
-        filtered_data = [
-            row for row in filtered_data
-            if from_date <= string_to_date(row[0]) <= to_date
-        ]
+        filtered_data = []
+
+        for row in data_table:
+            row_date = string_to_date(row[0])
+            if from_date <= row_date <= to_date:
+                filtered_data.append(row)
+
         row_colors = create_row_colors_list(filtered_data, category_list)
         window['table'].update(values=filtered_data, row_colors=row_colors)
 

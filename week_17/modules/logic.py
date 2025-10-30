@@ -10,32 +10,49 @@ from week_17.classes.Transaction import Transaction
 def execute():
     # load data
     finance_manager = load_data()
-    info = {}
+
+    transaction_list = finance_manager.transaction_list
+    category_list = finance_manager.category_list
+
+    transaction_matrix, category_matrix = finance_manager.to_matrix()
+
+    main_window = gui.start_main_window(transaction_matrix, category_list)
+    success_massage = ''
 
     # all the logic
     while True:
         try:
             transaction_matrix, category_matrix = finance_manager.to_matrix()
 
-            event, info, window = gui.display_main_window(transaction_matrix, category_matrix,finance_manager.category_list)
+            event, values = gui.read_from_window(main_window)
 
             if event == gui.get_win_closed()  or event == 'Exit':
                 break
 
             if event == 'Add Expense':
-                add_transaction(info, finance_manager)
-                gui.display_notification('Expense added successfully')
+                info = gui.disable_window_and_popup_another(main_window, gui.display_add_transaction_window, category_matrix, 'Expense')
+                add_transaction(info, transaction_list, category_list)
+                success_massage = 'Expense added successfully'
             elif event == 'Add Income':
-                add_transaction(info, finance_manager)
-                gui.display_notification('Income added successfully')
+                info = gui.disable_window_and_popup_another(main_window, gui.display_add_transaction_window, category_matrix,'Income')
+                add_transaction(info, transaction_list, category_list)
+                success_massage = 'Income added successfully'
             elif event == 'Add Category':
-                add_category(info, finance_manager)
-                gui.display_notification('Category added successfully')
+                info = gui.disable_window_and_popup_another(main_window, gui.display_add_category_window)
+                add_category(info, category_list)
+                success_massage = 'Category added successfully'
             elif event == 'Export to CSV':
                 export_to_csv(finance_manager)
-                gui.display_notification('Data successfully exported to the export directory')
+                success_massage = 'Data successfully exported to the export directory'
+            else:
+                gui.do_filter_table_logic(event, values, main_window, transaction_matrix, finance_manager.category_list)
 
-            gui.close_window(window)
+            if success_massage != '':
+                transaction_matrix, category_matrix = finance_manager.to_matrix()
+                
+                gui.update_table(main_window, 'table', transaction_matrix, category_list)
+                gui.display_notification(success_massage)
+                success_massage = ''
 
         # in case the window was closed or canceled
         except WindowsError as e:
@@ -48,6 +65,7 @@ def execute():
             print('Unexpected Error -> ', e)
 
     # save all data before close the window
+    gui.close_window(main_window)
     save_data(finance_manager)
 
 def export_to_csv(finance_manager:FinanceManager):
@@ -59,20 +77,20 @@ def export_to_csv(finance_manager:FinanceManager):
         transaction_dict['category'] = category['category']
     persistance.export_to_csv(transaction_dict_list, headers)
 
-def add_transaction(info, finance_manager):
-    transaction = create_transaction(info, finance_manager.category_list)
-    finance_manager.transaction_list.append(transaction)
+def add_transaction(info, transaction_list, category_list):
+    transaction = create_transaction(info, category_list)
+    transaction_list.append(transaction)
     save_transaction(transaction.to_dict())
 
-def add_category(info, finance_manager):
+def add_category(info, category_list):
     category = create_category(info)
 
     # The Category already exist
-    search = [existing for existing in  finance_manager.category_list if existing.category == category.category]
+    search = [existing for existing in  category_list if existing.category == category.category]
     if len(search) > 0:
         raise ValueError(f'Category {category.category} was not added it already exists')
 
-    finance_manager.category_list.append(category)
+    category_list.append(category)
     save_category(category.to_dict())
 
 def create_category(info:Dict) -> Category:
@@ -109,8 +127,5 @@ def load_data() -> FinanceManager:
     return finance_manager
 
 def save_data(finance_manager: FinanceManager):
-    try:
-        finance_manager = finance_manager.to_dict()
-        persistance.save_data(finance_manager)
-    except Exception as e:
-        print('An error occurred while saving data -> ', e)
+    finance_manager = finance_manager.to_dict()
+    persistance.save_data(finance_manager)
