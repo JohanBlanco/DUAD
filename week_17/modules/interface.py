@@ -115,46 +115,6 @@ def get_text_color_based_on_row_brightness(row_color:str):
 
     return text_color
 
-def display_transactions(data_table, category_list):
-    if len(data_table) != 0:
-        row_colors = create_row_colors_list(data_table, category_list)
-
-        title = 'Finance Manager - Transactions'
-
-        heading = ["Date", "Tile", "Amount", 'Category', 'Type']
-
-
-        layout = [
-            [
-                sg.Button('Back to Menu', key='back', button_color=('white', 'red'), bind_return_key=True),
-                sg.Push(),
-                sg.Column([
-                    [
-                        sg.InputText('', key='from_date_input', size=(9, 1), disabled=True, enable_events=True),
-                        sg.CalendarButton('From', key='from_picker', target='from_date_input', format='%m/%d/%Y'),
-                        sg.InputText('', key='to_date_input', size=(9, 1), disabled=True, enable_events=True),
-                        sg.CalendarButton('To', key='to_picker', target='to_date_input', format='%m/%d/%Y'),
-                        sg.Button('Filter', key='filter'),
-                        sg.Button('Clear Filter', key='clear_filter')
-                    ]
-                ], element_justification='right', expand_x=True)
-            ],
-            [
-                sg.Column([
-                    [sg.Table(values=data_table, headings=heading, key='table', row_colors=row_colors)]
-                ], element_justification='center', expand_x=True)
-            ]
-        ]
-
-
-        window = sg.Window(title, layout)
-
-        do_filter_table_logic(data_table,window, category_list)
-
-        window.close()
-    else:
-        sg.popup_error('The are 0 transactions in the sistem yet', title='Error')
-
 
 def display_add_transaction_window(category_list, transaction_type:str):
     if len(category_list) != 0:
