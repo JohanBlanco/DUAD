@@ -1,10 +1,9 @@
 import json
+import csv
 import os
 
 from week_17.classes.FinanceManager import FinanceManager
 
-categories_json_path = '../data/categories.json'
-transactions_json_path = '../data/transactions.json'
 
 def read_json_file(path):
     if not os.path.exists(path) or os.path.getsize(path) == 0:
@@ -25,23 +24,38 @@ def write_json_file(dict_content, path):
     except Exception as e:
         print(e)
 
-def save_category(category_dict):
-    categories = read_json_file(categories_json_path)
+def write_csv_file(data, headers, path):
+    with open(path, 'w', encoding='utf-8', newline='') as file:
+        writer = csv.DictWriter(file, headers, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(data)
+
+def export_to_csv(data, headers, path = '../export/transactions.csv'):
+    write_csv_file(data, headers, path)
+
+def save_category(category_dict, path = '../data/categories.json'):
+    categories = read_json_file(path)
     categories.append(category_dict)
-    write_json_file(categories, categories_json_path)
+    write_json_file(categories, path)
 
-def save_transaction(transaction_dict):
-    transactions = read_json_file(transactions_json_path)
+def save_transaction(transaction_dict, path = '../data/transactions.json'):
+    transactions = read_json_file(path)
     transactions.append(transaction_dict)
-    write_json_file(transactions, transactions_json_path)
+    write_json_file(transactions, path)
 
+def load_categories(path = '../data/categories.json'):
+    return read_json_file(path)
+
+def load_transactions(path = '../data/transactions.json'):
+    return read_json_file(path)
 
 def load_data():
-    categories = read_json_file(categories_json_path)
-    transactions = read_json_file(transactions_json_path)
+    categories = load_categories()
+    transactions = load_transactions()
+
     return categories, transactions
 
 def save_data(file_manager:FinanceManager):
 
-    write_json_file(file_manager.category_list, categories_json_path)
-    write_json_file(file_manager.transaction_list, transactions_json_path)
+    write_json_file(file_manager.category_list, '../data/categories.json')
+    write_json_file(file_manager.transaction_list, '../data/transactions.json')

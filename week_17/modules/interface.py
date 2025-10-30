@@ -6,56 +6,130 @@ from typing import Dict, List
 def get_win_closed():
     return sg.WIN_CLOSED
 
-def display_main_window():
+def display_main_window(data_table, category_matrix, category_list):
     title = 'Finance Manager'
 
-    layout = [
+    # MENU
+    left_layout = [
         [sg.Text("Menu", font=("Helvetica", 16), justification='center')],
         [sg.Column([
-            [sg.Button("List Transactions", size=(15, 1))],
             [sg.Button("Add Expense", size=(15, 1))],
             [sg.Button("Add Income", size=(15, 1))],
             [sg.Button("Add Category", size=(15, 1))],
+            [sg.Button("Export to CSV", size=(15, 1))],
             [sg.Button("Exit", size=(15, 1))]
         ], element_justification='center')]
     ]
 
-    window = sg.Window(title, layout, element_justification='center')
+    # TABLE
+    heading = ["Date", "Tile", "Amount", 'Category', 'Type']
+    row_colors = create_row_colors_list(data_table, category_list)
 
-    event, values = window.read()
+    right_layout = [
+        [
+            sg.Push(),
+            sg.Column([
+                [
+                    sg.InputText('', key='from_date_input', size=(9, 1), disabled=True, enable_events=True),
+                    sg.CalendarButton('From', key='from_picker', target='from_date_input', format='%m/%d/%Y'),
+                    sg.InputText('', key='to_date_input', size=(9, 1), disabled=True, enable_events=True),
+                    sg.CalendarButton('To', key='to_picker', target='to_date_input', format='%m/%d/%Y'),
+                    sg.Button('Filter', key='filter'),
+                    sg.Button('Clear Filter', key='clear_filter')
+                ]
+            ], element_justification='right', expand_x=True)
+        ],
+        [
+            sg.Column([
+                [sg.Table(values=data_table, headings=heading, key='table', row_colors=row_colors)]
+            ], element_justification='center', expand_x=True)
+        ]
+    ]
+
+    layout = [
+        [
+            sg.Column(left_layout, element_justification='center', background_color='#DDDDDD'),
+            sg.VSeperator(),
+            sg.Column(right_layout, element_justification='center')
+        ]
+    ]
+
+    window = sg.Window(title, layout)
+    info = {}
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'Exit' or event == 'Export to CSV':
+            break
+
+        # MENU CASES
+        if event == 'Add Expense':
+            info = disable_window_and_popup_another(window, display_add_transaction_window, category_matrix, 'Expense')
+            break
+        elif event == 'Add Income':
+            info = disable_window_and_popup_another(window, display_add_transaction_window, category_matrix, 'Income')
+            break
+        elif event == 'Add Category':
+            info = disable_window_and_popup_another(window, display_add_category_window)
+            break
+        else:
+            # TABLE CASES
+            do_filter_table_logic(event, values, window, data_table, category_list)
+
+    return event, info, window
+
+def display_notification(message):
+    sg.popup_notify(message)
+
+def display_error(error):
+    sg.popup_error(error)
+
+def close_window(window):
     window.close()
-    return event, values
 
-def create_row_colors_list(transaction_list):
+def disable_window_and_popup_another(window, func, *args, **kwargs):
+    window.disable()
+    result = func(*args, **kwargs)
+    window.enable()
+    return result
+
+def create_row_colors_list(data_table, category_list):
     row_colors = []
 
-    for row_number, transaction in enumerate(transaction_list):
-        row_color = transaction.category.color.lstrip('#')
-        r, g, b = [int(row_color[i:i+2], 16) for i in (0, 2, 4)]
-
-        # Calculate brightness (W3C formula)
-        brightness = (0.299 * r + 0.587 * g + 0.114 * b)
-
-        # Choose text color based on brightness
-        text_color = '#000000' if brightness > 127 else '#FFFFFF'
-
-        row_color_info = (row_number, text_color, f'#{row_color}')
-        row_colors.append(row_color_info)
+    for row_number, row in enumerate(data_table):
+        if len(row) >= 3:
+            row_category = row[3]
+            found_colors = [category.color for category in category_list if category.category == row_category]
+            if len(found_colors) > 0:
+                row_color = found_colors[0]
+                text_color = get_text_color_based_on_row_brightness(row_color)
+                row_color_info = (row_number, text_color, row_color)
+                row_colors.append(row_color_info)
+        else:
+            raise ValueError(f'The row {row} has less than 4 elements, the category must be in position 3')
 
     return row_colors
 
-def display_transactions(data_table, transaction_list):
+def get_text_color_based_on_row_brightness(row_color:str):
+
+    row_color = row_color.lstrip('#')
+    r, g, b = [int(row_color[i:i+2], 16) for i in (0, 2, 4)]
+
+    # Calculate brightness (W3C formula)
+    brightness = (0.299 * r + 0.587 * g + 0.114 * b)
+
+    # Choose text color based on brightness
+    text_color = '#000000' if brightness > 127 else '#FFFFFF'
+
+    return text_color
+
+def display_transactions(data_table, category_list):
     if len(data_table) != 0:
-        row_colors = create_row_colors_list(transaction_list)
+        row_colors = create_row_colors_list(data_table, category_list)
 
         title = 'Finance Manager - Transactions'
 
         heading = ["Date", "Tile", "Amount", 'Category', 'Type']
-
-        table = sg.Table(values=data_table, headings=heading, key='table')
-
-        if len(row_colors) == len(data_table) and len(row_colors) !=0:
-            table = sg.Table(values=data_table, headings=heading, key='table', row_colors=row_colors)
 
 
         layout = [
@@ -74,14 +148,16 @@ def display_transactions(data_table, transaction_list):
                 ], element_justification='right', expand_x=True)
             ],
             [
-                sg.Column([[table]], element_justification='center', expand_x=True)
+                sg.Column([
+                    [sg.Table(values=data_table, headings=heading, key='table', row_colors=row_colors)]
+                ], element_justification='center', expand_x=True)
             ]
         ]
 
 
         window = sg.Window(title, layout)
 
-        do_filter_table_logic(data_table,window)
+        do_filter_table_logic(data_table,window, category_list)
 
         window.close()
     else:
@@ -237,42 +313,38 @@ def are_all_elements_numeric(numeric_list:List):
 
     return return_value
 
-def do_filter_table_logic(data_table, window):
+def do_filter_table_logic(event, values, window, data_table, category_list):
+    from_date_string = values['from_date_input']
+    to_date_string = values['to_date_input']
 
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'back':
-            break
+    # Validates the dates are the correct values in order to filter
+    if event == 'from_date_input' or event == 'to_date_input':
+        event_date = values[event]
 
-        from_date_string = values['from_date_input']
-        to_date_string = values['to_date_input']
+        if not is_date_before_or_equals_today(event_date):
+            sg.popup_error(f'The date can not be in the future', title='Error')
+            window[event].update('')
+        elif not is_from_before_or_equals_to(from_date_string=from_date_string, to_date_string=to_date_string):
+            sg.popup_error(f'From date {from_date_string} is greate than To date {to_date_string}', title='Error')
+            window[event].update('')
 
-        # Validates the dates are the correct values in order to filter
-        if event == 'from_date_input' or event == 'to_date_input':
-            event_date = values[event]
+    elif event == 'filter' and len(from_date_string) > 0 and len(to_date_string) > 0:
+        filtered_data = data_table.copy()
+        from_date = string_to_date(from_date_string)
+        to_date = string_to_date(to_date_string)
+        filtered_data = [
+            row for row in filtered_data
+            if from_date <= string_to_date(row[0]) <= to_date
+        ]
+        row_colors = create_row_colors_list(filtered_data, category_list)
+        window['table'].update(values=filtered_data, row_colors=row_colors)
 
-            if not is_date_before_or_equals_today(event_date):
-                sg.popup_error(f'The date can not be in the future', title='Error')
-                window[event].update('')
-            elif not is_from_before_or_equals_to(from_date_string=from_date_string, to_date_string=to_date_string):
-                sg.popup_error(f'From date {from_date_string} is greate than To date {to_date_string}', title='Error')
-                window[event].update('')
+    elif event == 'clear_filter':
+        window['from_date_input'].update('')
+        window['to_date_input'].update('')
 
-        elif event == 'filter' and len(from_date_string) > 0 and len(to_date_string) > 0:
-            filtered_data = data_table.copy()
-            from_date = string_to_date(from_date_string)
-            to_date = string_to_date(to_date_string)
-            filtered_data = [
-                row for row in filtered_data
-                if from_date <= string_to_date(row[0]) <= to_date
-            ]
-            window['table'].update(values=filtered_data)
-
-        elif event == 'clear_filter':
-            window['from_date_input'].update('')
-            window['to_date_input'].update('')
-
-            window['table'].update(values=data_table)
+        row_colors = create_row_colors_list(data_table, category_list)
+        window['table'].update(values=data_table, row_colors=row_colors)
 
 def is_date_before_or_equals_today(string):
     date_in_string = string_to_date(string)
