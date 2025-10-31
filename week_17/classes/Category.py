@@ -1,5 +1,5 @@
 class Category:
-    def __init__(self, category, color):
+    def __init__(self, category='', color=''):
         self.category = category
         self.color = color
 

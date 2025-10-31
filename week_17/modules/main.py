@@ -1,4 +1,4 @@
-import logic
+import execute
 
 if __name__ == "__main__":
-    logic.execute()
+    execute.run()

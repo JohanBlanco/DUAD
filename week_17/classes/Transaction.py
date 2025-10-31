@@ -2,7 +2,7 @@ from week_17.classes.Category import Category
 
 
 class Transaction:
-    def __init__(self,title, type, date,  amount, category):
+    def __init__(self,title = '', type='', date='',  amount='', category=Category()):
         self.amount = amount
         self.title = title
         self.type = type
