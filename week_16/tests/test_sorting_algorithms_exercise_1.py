@@ -1,4 +1,4 @@
-from modules.sorting_algorithms import bubble_sort
+from week_16.modules.sorting_algorithms import bubble_sort
 import pytest
 
 def test_bubble_sort_works_with_small_list():
