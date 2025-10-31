@@ -1,3 +1,11 @@
-*.csv
-__pycache__/
-.pytest_cache
+# Archivos temporales
+**/*.csv
+**/*.json
+
+# Cachés de Python
+**/__pycache__/
+.pytest_cache/
+
+# Entornos virtuales
+venv/
+.env/
