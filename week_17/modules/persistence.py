@@ -7,8 +7,8 @@ from week_17.classes.FinanceManager import FinanceManager
 '''
 Global Variables so the path is the same in every function
 '''
-environment = 'dev'
-# environment = 'prod'
+# environment = 'dev'
+environment = 'prod'
 
 categories_json_path = f'week_17/data/{environment}/categories.json'
 transactions_json_path = f'week_17/data/{environment}/transactions.json'
