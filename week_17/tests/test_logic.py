@@ -175,5 +175,3 @@ def test_export_to_csv_successfully():
 
     # Assert
     assert len(expected) == 1 and len(result) == 1 and exp.__eq__(res)
-
-test_export_to_csv_successfully()
