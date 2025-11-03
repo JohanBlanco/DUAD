@@ -12,3 +12,8 @@ class Category:
 
     def to_matrix(self):
         return self.category
+
+    def __eq__(self, other):
+        if not isinstance(other, Category):
+            return False
+        return self.to_dict() == other.to_dict()

@@ -42,3 +42,7 @@ class Transaction:
             transaction_dict['type'],
         ]
 
+    def __eq__(self, other):
+        if not isinstance(other, Transaction):
+            return False
+        return self.to_dict() == other.to_dict()  # compare attribute values

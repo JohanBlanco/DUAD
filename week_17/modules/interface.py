@@ -176,7 +176,7 @@ def get_validated_category_info(window):
             raise WindowsError(f"The window {window.Title} was closed or canceled")
 
         info = {
-            'category': values['category'],
+            'category': values['category'].strip(),
             "color": values['color']
         }
 
@@ -280,7 +280,7 @@ def is_there_an_empty_field(fields:Dict):
     return_value = False
 
     for key, value in fields.items():
-        if value == '':
+        if value.strip() == '':
             return_value =  True
             break
 

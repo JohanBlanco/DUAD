@@ -1,5 +1,5 @@
-import logic
-import interface as gui
+import week_17.modules.logic as logic
+import week_17.modules.interface as gui
 
 def run():
     try:
@@ -27,12 +27,12 @@ def run():
                 if event == 'Add Expense':
                     info = gui.disable_window_and_popup_another(main_window, gui.display_add_transaction_window,
                                                                 category_matrix, 'Expense')
-                    logic.add_transaction(info, transaction_list, category_list)
+                    logic.add_transaction(info, transaction_list)
                     success_massage = 'Expense added successfully'
                 elif event == 'Add Income':
                     info = gui.disable_window_and_popup_another(main_window, gui.display_add_transaction_window,
                                                                 category_matrix, 'Income')
-                    logic.add_transaction(info, transaction_list, category_list)
+                    logic.add_transaction(info, transaction_list)
                     success_massage = 'Income added successfully'
                 elif event == 'Add Category':
                     info = gui.disable_window_and_popup_another(main_window, gui.display_add_category_window)
