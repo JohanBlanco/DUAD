@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import List, Dict
+from typing import Dict
 
-from week_17.classes.Category import Category
-from week_17.classes.FinanceManager import FinanceManager
-from week_17.classes.Transaction import Transaction
-import week_17.modules.persistence as persistence
+from first_module.week_17.classes.Category import Category
+from first_module.week_17.classes.FinanceManager import FinanceManager
+from first_module.week_17.classes.Transaction import Transaction
+import first_module.week_17.modules.persistence as persistence
 
 
 '''

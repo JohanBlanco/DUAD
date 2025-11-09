@@ -1,10 +1,10 @@
 import pytest
 
-import week_17.modules.persistence as persistence
-from week_17.classes.Category import Category
-from week_17.classes.FinanceManager import FinanceManager
-from week_17.classes.Transaction import Transaction
-from week_17.modules.logic import add_category, add_transaction, get_all_categories, get_all_transactions, export_to_csv
+import first_module.week_17.modules.persistence as persistence
+from first_module.week_17.classes.Category import Category
+from first_module.week_17.classes.FinanceManager import FinanceManager
+from first_module.week_17.classes.Transaction import Transaction
+from first_module.week_17.modules.logic import add_category, add_transaction, get_all_categories, get_all_transactions, export_to_csv
 
 '''
 TEST NAME CONVENTION

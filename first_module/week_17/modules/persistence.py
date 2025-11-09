@@ -2,7 +2,7 @@ import json
 import csv
 import os
 
-from week_17.classes.FinanceManager import FinanceManager
+from first_module.week_17.classes.FinanceManager import FinanceManager
 
 '''
 Global Variables so the path is the same in every function

@@ -1,5 +1,5 @@
-import week_17.modules.logic as logic
-import week_17.modules.interface as gui
+import first_module.week_17.modules.logic as logic
+import first_module.week_17.modules.interface as gui
 
 def run():
     try:

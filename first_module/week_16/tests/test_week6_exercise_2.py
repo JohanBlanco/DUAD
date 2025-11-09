@@ -1,8 +1,8 @@
-from week_6.exercise_4_task_functions import sum_list_numbers
-from week_6.exercise_5_task_functions import revert_string
-from week_6.exercise_6_task_functions import number_of_cases
-from week_6.exercise_7_task_functions import sort_alphabetically
-from week_6.exercise_8_task_functions import get_prime_numbers
+from first_module.week_6.exercise_4_task_functions import sum_list_numbers
+from first_module.week_6.exercise_5_task_functions import revert_string
+from first_module.week_6.exercise_6_task_functions import number_of_cases
+from first_module.week_6.exercise_7_task_functions import sort_alphabetically
+from first_module.week_6.exercise_8_task_functions import get_prime_numbers
 
 def test_sum_list_numbers_with_integers():
     # Arrange

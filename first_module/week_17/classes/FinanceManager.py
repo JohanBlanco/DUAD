@@ -1,5 +1,5 @@
-from week_17.classes.Transaction import Transaction
-from week_17.classes.Category import Category
+from first_module.week_17.classes.Transaction import Transaction
+from first_module.week_17.classes.Category import Category
 
 
 class FinanceManager:
