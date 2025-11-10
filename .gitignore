@@ -2,7 +2,7 @@
 **/*.csv
 **/*.json
 
-**/*.idea
+.idea/
 
 # Cachés de Python
 **/__pycache__/
