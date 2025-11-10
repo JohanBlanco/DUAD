@@ -14,8 +14,7 @@ CREATE TABLE products(
 
 CREATE TABLE shopping_carts(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_email VARCHAR(100) NOT NULL,
-    total INTEGER NOT NULL
+    user_email VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE shopping_cart_items(
@@ -45,8 +44,8 @@ INSERT INTO products(name, code, price,date_received, brand) VALUES('Coca Cola',
 INSERT INTO products(name, code, price,date_received, brand) VALUES('Pizza', '003', 1000, '2025-11-09', 'Dominos');
 INSERT INTO products(name, code, price,date_received, brand) VALUES('Hamburguer', '004', 100, '2025-11-09', 'Burguer king');
 
-INSERT INTO shopping_carts(user_email, total) VALUES('buyer1@gmail.com', 2800);
-INSERT INTO shopping_carts(user_email, total) VALUES('buyer2@gmail.com', 1100);
+INSERT INTO shopping_carts(user_email) VALUES('buyer1@gmail.com');
+INSERT INTO shopping_carts(user_email) VALUES('buyer2@gmail.com');
 
 INSERT INTO shopping_cart_items(product_id, shopping_cart_id, quantity, total) VALUES(1, 1, 2, 200);
 INSERT INTO shopping_cart_items(product_id, shopping_cart_id, quantity, total) VALUES(2, 1, 2, 400);
