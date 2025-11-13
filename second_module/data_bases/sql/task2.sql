@@ -30,13 +30,21 @@ CREATE TABLE shopping_cart_items(
 
 CREATE TABLE invoices(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    shopping_cart_id INTEGER UNIQUE NOT NULL,
     invoice_number VARCHAR(100) NOT NULL,
     purchease_date DATE NOT NULL,
     buyer_email VARCHAR(100) NOT NULL,
     total INTEGER NOT NULL,
+);
 
-    FOREIGN KEY (shopping_cart_id) REFERENCES shopping_cart(id)
+CREATE TABLE sales(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER UNIQUE NOT NULL,
+    invoice_id INTEGER UNIQUE NOT NULL,
+    product_amount INTEGER NOT NULL,
+    total_price INTEGER NOT NULL,
+
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id)
 );
 
 INSERT INTO products(name, code, price,date_received, brand) VALUES('H20', '001', 100, '2025-11-09', 'Dos Pinos');
