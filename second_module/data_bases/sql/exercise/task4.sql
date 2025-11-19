@@ -12,12 +12,8 @@ select *
 from sales
 where product_id = 1;
 -- Obtenga todas las compras agrupadas por producto, donde se muestre el total comprado entre todas las compras.
-select sum(total_by_product) as incomes
-from (
-    select product_id, sum(total_price) total_by_product
-    from sales
-    group by product_id
-);
+select sum(total_price) incomes
+from sales;
 
 -- Obtenga todas las facturas realizadas por el mismo comprador
 select *
