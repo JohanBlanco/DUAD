@@ -9,7 +9,7 @@ inner join Authors a
 on b.Author = a.id;
 ```
 
-![image0](outputs/image0.png)
+![image0](../outputs/image0.png)
 
 ## 2. Obtenga todos los libros que no tienen autor
 
@@ -21,7 +21,7 @@ on b.Author = a.id
 where a.id is NULL;
 ```
 
-![image1](outputs/image1.png)
+![image1](../outputs/image1.png)
 
 ## 3. Obtenga todos los autores que no tienen libros
 
@@ -33,7 +33,7 @@ on b.Author = a.id
 where b.id is NULL;
 ```
 
-![image2](outputs/image2.png)
+![image2](../outputs/image2.png)
 
 ## 4. Obtenga todos los libros que han sido rentados en algún momento
 
@@ -45,7 +45,7 @@ on b.id = r.BookID
 group by name;
 ```
 
-![image3](outputs/image3.png)
+![image3](../outputs/image3.png)
 
 ## 5. Obtenga todos los libros que nunca han sido rentados
 
@@ -58,7 +58,7 @@ where r.id  is NULL
 group by b.id;
 ```
 
-![image4](outputs/image4.png)
+![image4](../outputs/image4.png)
 
 ## 6. Obtenga todos los clientes que nunca han rentado un libro
 
@@ -71,7 +71,7 @@ where id not in (
 );
 ```
 
-![image5](outputs/image5.png)
+![image5](../outputs/image5.png)
 
 ## 7. Obtenga todos los libros que han sido rentados y están en estado "Overdue"
 
@@ -83,4 +83,4 @@ on b.id = r.BookID
 where r.State = 'Overdue';
 ```
 
-![image6](outputs/image6.png)
+![image6](../outputs/image6.png)
