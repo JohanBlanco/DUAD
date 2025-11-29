@@ -19,7 +19,7 @@ def create_task():
     if body['status'] not in ('Created', 'In progress', 'Needs Changes', 'Completed'):
         raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are 'Created', 'In progress', 'Needs Changes', 'Completed'")
 
-    task = Task.from_dict(body)
+    task = Task(title=body['title'], description=body['description'], status=body['status'])
 
     response = db.add_task(task)
     return response, 200
