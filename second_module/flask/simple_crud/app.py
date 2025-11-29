@@ -27,6 +27,7 @@ def create_task():
 # Read
 @app.route('/tasks', methods = ['GET'])
 def get_tasks():
+    # raises an exeption in case it was not found
     task_List = db.get_tasks()
     response = Task.convert_to_dict_list(task_List)
     return response, 200
