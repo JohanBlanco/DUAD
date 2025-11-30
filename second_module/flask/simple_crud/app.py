@@ -1,12 +1,12 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify
 from task import Task
 import db as db
-from custom_exeptions import NotFoundError, BadRequestError
+from custom_exceptions import NotFoundError, BadRequestError
 
 app = Flask(__name__)
 
 # Create
-@app.route('/tasks/create', methods = ['POST'])
+@app.route('/tasks', methods = ['POST'])
 def create_task():
     body = request.json
 
@@ -19,7 +19,7 @@ def create_task():
     valid_status = ['To Be Done', 'In Progress', 'Completed']
 
     if body['status'] not in valid_status:
-        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are { ", ".join(valid_status)}")
+        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are {', '.join(valid_status)}")
 
     task = Task(title=body['title'], description=body['description'], status=body['status'])
 
@@ -31,7 +31,15 @@ def create_task():
 def get_tasks():
     # raises an exeption in case it was not found
     task_List = db.get_tasks()
+
     response = Task.convert_to_dict_list(task_List)
+
+    status_filter = request.args.get("status")
+
+    if status_filter:
+        filtered_tasks = filter(lambda t: t.status == status_filter, task_List)
+        response = Task.convert_to_dict_list(filtered_tasks)
+    
     return response, 200
 
 @app.route('/tasks/<int:id>', methods = ['GET'])
@@ -43,7 +51,7 @@ def get_task_by_id(id):
     return response, 200
 
 # Update
-@app.route('/tasks/update/<int:id>', methods = ['POST','PUT'])
+@app.route('/tasks/<int:id>', methods = ['PUT','PATCH'])
 def update_task(id):
     body = request.json
 
@@ -53,7 +61,7 @@ def update_task(id):
     valid_status = ['To Be Done', 'In Progress', 'Completed']
 
     if 'status' in body and body['status'] not in valid_status:
-        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are {", ".join(valid_status)}")
+        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are {', '.join(valid_status)}")
 
     # raises an exeption in case it was not found
     task_to_update = db.get_task(id)
@@ -71,7 +79,7 @@ def update_task(id):
     return response, 200
 
 # Delete
-@app.route('/tasks/delete/<int:id>', methods = ['DELETE'])
+@app.route('/tasks/<int:id>', methods = ['DELETE'])
 def delete_task(id):
     # raises an exeption in case it was not found
     task_to_delete = db.get_task(id)

@@ -1,7 +1,7 @@
 import os
 import json
 from task import Task
-from custom_exeptions import NotFoundError
+from custom_exceptions import NotFoundError
 
 filepath = 'second_module/flask/simple_crud/tasks.json'
 
