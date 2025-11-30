@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, jsonify, abort
 from task import Task
 import db as db
 from custom_exeptions import NotFoundError, BadRequestError
@@ -15,9 +15,11 @@ def create_task():
 
     if not body['title'] or not body['description'] or not body['status']:
         raise BadRequestError('There are some empty fields: name, description or status')
+    
+    valid_status = ['To Be Done', 'In Progress', 'Completed']
 
-    if body['status'] not in ('Created', 'In progress', 'Needs Changes', 'Completed'):
-        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are 'Created', 'In progress', 'Needs Changes', 'Completed'")
+    if body['status'] not in valid_status:
+        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are { ", ".join(valid_status)}")
 
     task = Task(title=body['title'], description=body['description'], status=body['status'])
 
@@ -47,9 +49,11 @@ def update_task(id):
 
     if not body:
         raise BadRequestError(f'No Data was provided')
+    
+    valid_status = ['To Be Done', 'In Progress', 'Completed']
 
-    if 'status' in body and body['status'] not in ('Created', 'In progress', 'Needs Changes', 'Completed'):
-        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are Created, In progress, Needs Changes, Completed")
+    if 'status' in body and body['status'] not in valid_status:
+        raise BadRequestError(f"{body['status']} is an invalid status, the valid statuses are {", ".join(valid_status)}")
 
     # raises an exeption in case it was not found
     task_to_update = db.get_task(id)
@@ -80,11 +84,18 @@ def delete_task(id):
 # Custom Error Handler
 @app.errorhandler(NotFoundError)
 def handle_not_found_error(error):
+    app.logger.error(error)
     return jsonify({"error": str(error)}), 404
 
 @app.errorhandler(BadRequestError)
 def handle_bad_request_error(error):
+    app.logger.error(error)
     return jsonify({"error": str(error)}), 400
+
+@app.errorhandler(Exception)
+def handle_general_exception(error):
+    app.logger.error(f"Unhandled Exception: {error}")
+    return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)
