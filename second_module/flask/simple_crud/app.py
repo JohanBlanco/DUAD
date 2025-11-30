@@ -76,9 +76,7 @@ def delete_task(id):
     # raises an exeption in case it was not found
     task_to_delete = db.get_task(id)
 
-    task_to_delete_id = task_to_delete.id
-
-    response = db.delete_task(task_to_delete_id)
+    response = db.delete_task(task_to_delete.id)
     return jsonify(response), 204
 
 # Custom Error Handler
