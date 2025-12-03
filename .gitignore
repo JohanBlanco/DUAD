@@ -10,4 +10,4 @@
 
 # Entornos virtuales
 venv/
-.env/
+.env
