@@ -1,5 +1,6 @@
 from app.repositories.user_repository import UserRepository
 from app.models.user_dto import CreateUserDto, UpdateUserDto
+from app.helpers.exceptions import BadRequestError
 
 class UserService:
     def __init__(self, repo: UserRepository):
@@ -9,9 +10,17 @@ class UserService:
         # raises an exception if a field is missing
         user = CreateUserDto(**data)
 
+        values = [str(value).strip() for value in user.__dict__.values()]
+
+        if "" in values:
+            raise BadRequestError("There some empty fileds")
         
-        return self.repo.create(user.first_name, user.last_name, user.email,
+        self.repo.create(user.first_name, user.last_name, user.email,
                                 user.username, user.password, user.birthdate, user.status)
+        
+        user = self.repo.get_last_record()
+        
+        return user
     
     def update_user(self, data):
         # validate business rules
@@ -26,12 +35,12 @@ class UserService:
         results = {}
 
         if filters:
-            column, value = filters.items()[0]
+            column, value = next(iter(filters.items()))
             
             allowed_columns:dict = self.repo.get_columns()
-            if column not in allowed_columns['columns']:
+            if column not in allowed_columns and column != 'password':
                 # change this for a better exception
-                raise Exception(f"The filter {column} is not valid")
+                raise BadRequestError(f"The filter {column} is not valid")
                 
             results = self.repo.get_by_column(column, value)
                 

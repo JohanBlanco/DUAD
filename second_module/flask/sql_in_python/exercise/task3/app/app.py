@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from app.db.pg_manager import PgManager
 from app.routes.user_routes import user_routes
 from app.services.user_service import UserService
+from app.repositories.user_repository import UserRepository
 from app.helpers.handlers import register_error_handlers
-from app.helpers.teardown_appcontext import register_teardowns
+from app.helpers.db_hooks import register_db_hooks
 
 load_dotenv()
 
@@ -25,24 +26,29 @@ def create_app():
     )
 
     # ---------------------------
-    #  Services
+    #  Repositories
     # ---------------------------
-    user_service = UserService(db_manager)
+    user_repository = UserRepository(db_manager)
 
     # ---------------------------
-    #  Blueprints
+    #  Services
+    # ---------------------------
+    user_service = UserService(user_repository)
+
+    # ---------------------------
+    #  Blueprints / Routes
     # ---------------------------
     user_blueprint = user_routes(user_service)
 
     # ---------------------------
-    #  Register Blueprints
+    #  Register Blueprints/Routes
     # ---------------------------
-    app.register_blueprint(user_blueprint, url_prefix="/users")
+    app.register_blueprint(user_blueprint)
 
     # ---------------------------
     #  Error Handlers & Teardowns
     # ---------------------------
     register_error_handlers(app)
-    register_teardowns(app=app, db_manager=db_manager)
+    register_db_hooks(app=app, db_manager=db_manager)
 
     return app

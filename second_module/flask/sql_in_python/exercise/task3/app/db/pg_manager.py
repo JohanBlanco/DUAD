@@ -8,22 +8,18 @@ class PgManager():
         self.password = password
         self.host = host
         self.port = port
-        self.connection = self.get_connection()
+        self.connection = self.create_connection()
         
-    def get_connection(self):
-        try:
-            connection = psycopg2.connect(
-                dbname=self.db_name,
-                user=self.user,
-                password=self.password,
-                host=self.host,
-                port=self.port,
-            )
-            print("Connection created succesfully")
-            return connection
-        except Exception as error:
-            print("Error connecting to the database:", error)
-            return None
+    def create_connection(self):
+        self.connection = psycopg2.connect(
+            dbname=self.db_name,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port,
+        )
+        print("Connection created succesfully")
+        return self.connection
 
     def close_connection(self):
         if self.connection:

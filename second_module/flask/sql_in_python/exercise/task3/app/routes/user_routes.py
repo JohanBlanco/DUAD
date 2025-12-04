@@ -8,18 +8,18 @@ def user_routes(service:UserService):
     def create_user():
         body = request.json
         response = service.create_user(body)
-        return response, 201
+        return jsonify(response), 201
     
     @bp.patch("/users")
     def update_user():
         body = request.json
         response = service.update_user(body)
-        return response, 201
+        return jsonify(response), 200
     
     @bp.get("/users")
     def get_users():
         filters = request.args.to_dict()
         response = service.get_users(filters)
-        return response, 201
+        return jsonify(response), 200
 
     return bp
