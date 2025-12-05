@@ -1,5 +1,5 @@
 from app.repositories.user_repository import UserRepository
-from app.models.user_dto import CreateUserDto, UpdateUserDto
+from app.dataclasses.user_dataclass import User
 from app.helpers.exceptions import BadRequestError
 
 class UserService:
@@ -8,27 +8,41 @@ class UserService:
 
     def create_user(self, data):
         # raises an exception if a field is missing
-        user = CreateUserDto(**data)
+        user:User = User.from_dict(data)
+
+        already_existing_user = self.repo.get_by_email(user.email)
+        if already_existing_user.id:
+            raise BadRequestError(f'Already exist an user with the email {user.email}')
 
         values = [str(value).strip() for value in user.__dict__.values()]
-
         if "" in values:
             raise BadRequestError("There some empty fileds")
         
         self.repo.create(user.first_name, user.last_name, user.email,
                                 user.username, user.password, user.birthdate, user.status)
         
-        user = self.repo.get_last_record()
+        user = self.repo.get_by_email(user.email)
         
-        return user
+        return user.__dict__
     
-    def update_user(self, data):
+    #CONTINUE
+    def update_user(self, data, id):
         # validate business rules
-        user = UpdateUserDto(**data)
+        user:User = User.from_dict(data)
 
+        if user.id:
+            raise BadRequestError(f'The id cannot be updated')
+
+        values = [str(value).strip() for value in user.__dict__.values()]
+        if "" in values:
+            raise BadRequestError("There some empty fileds")
         
-        return self.repo.update(user.first_name, user.last_name, user.email,
+        self.repo.update(user.first_name, user.last_name, user.email,
                                 user.username, user.password, user.birthdate, user.status)
+        
+        user = self.repo.get_by_email(user.email)
+        
+        return user.__dict__
     
     def get_users(self, filters:dict):
         # validate business rules
@@ -47,6 +61,6 @@ class UserService:
         else:
             results = self.repo.get_all()
 
-        return results
+        return [user.__dict__ for user in results]
     
     

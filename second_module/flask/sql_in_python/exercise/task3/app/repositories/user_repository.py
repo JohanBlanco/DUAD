@@ -1,27 +1,30 @@
 from app.db.pg_manager import PgManager
+from app.dataclasses.user_dataclass import User
 
 class UserRepository():
     def __init__(self, db_manager:PgManager):
         self.db_manager = db_manager
 
     def create(self, first_name, last_name, email, username, password, birthdate, status):
-        query = """
-            INSERT INTO lyfter_car_rental.users 
-            (first_name, last_name, email, username, password, birthdate, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """
-
-        values = (first_name, last_name, email, username, password, birthdate, status)
-
-        self.db_manager.execute_query(query, values)
+        self.db_manager.execute_query(
+            "INSERT INTO lyfter_car_rental.users "
+            "(first_name, last_name, email, username, password, birthdate, status) " \
+            "VALUES (%s, %s, %s, %s, %s, %s, %s);", 
+            first_name, last_name, email, username, password, birthdate, status
+            )
 
         print("User inserted successfully")
         return True
 
     def get_all(self):
         try:
-            query = "SELECT id, first_name, last_name, email, username, birthdate, status FROM lyfter_car_rental.users;"
-            results = self.db_manager.execute_query(query)
+            results = self.db_manager.execute_query(
+                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
+                "FROM lyfter_car_rental.users;"
+            )
+
+            results = [User.from_dict(_dict) for _dict in results]
+
             return results
         except Exception as error:
             print("Error getting all users from the database: ", error)
@@ -29,33 +32,67 @@ class UserRepository():
 
     def get_by_column(self, column, value):
         try:
-            query = f"SELECT id, first_name, last_name, email, username, birthdate, status FROM lyfter_car_rental.users WHERE {column} = %s;"
-            values = (value,)
-            results = self.db_manager.execute_query(query, values)
+            results = self.db_manager.execute_query(
+                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
+                "FROM lyfter_car_rental.users " \
+                f"WHERE {column} = %s;",
+                value
+                )
+            
+            results = [User.from_dict(_dict) for _dict in results]
+
             return results
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
+        
+    def get_by_id(self, value):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
+                "FROM lyfter_car_rental.users " \
+                f"WHERE email = %s;",
+                value
+                )
+            
+            if results:
+                user = User.from_dict(results[0])
+            else:
+                user = User()
+            
+            return user
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
+        
+    def get_by_email(self, value):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
+                "FROM lyfter_car_rental.users " \
+                f"WHERE email = %s;",
+                value
+                )
+            
+            if results:
+                user = User.from_dict(results[0])
+            else:
+                user = User()
+            
+            return user
         except Exception as error:
             raise Exception(f"Error getting a user from the database: {error}")
 
     def update(self, id, first_name, last_name, email, username, password, birthdate, status):
         try:
-            query = "UPDATE lyfter_car_rental.users SET (first_name, last_name, email, username, password, birthdate, status) = (%s, %s, %s,%s, %s, %s,%s) WHERE ID = %s"
-            values = (first_name, last_name, email, username, password, birthdate, status, id,)
-            self.db_manager.execute_query(query, values)
+            self.db_manager.execute_query(
+                "UPDATE lyfter_car_rental.users " \
+                "SET (first_name, last_name, email, username, password, birthdate, status) = (%s, %s, %s,%s, %s, %s,%s) " \
+                "WHERE ID = %s;",
+                first_name, last_name, email, username, password, birthdate, status, id
+                )
             print("User updated successfully")
             return True
         except Exception as error:
             print("Error updating a user from the database: ", error)
-            return False
-
-    def delete(self, id):
-        try:
-            query = "DELETE FROM lyfter_car_rental.users WHERE id = (%s)"
-            values = (id,)
-            self.db_manager.execute_query(query, values)
-            print("User deleted successfully")
-            return True
-        except Exception as error:
-            print("Error deleting a user from the database: ", error)
             return False
         
     def get_columns(self):
@@ -72,12 +109,3 @@ class UserRepository():
         except Exception as error:
             print("Error getting the columns from the table", error)
             return []
-        
-    def get_last_record(self):
-        try:
-            query = "Select * from lyfter_car_rental.users where id in (SELECT max(id) id FROM lyfter_car_rental.users);"
-            results = self.db_manager.execute_query(query)
-            return results
-        except Exception as error:
-            print("Error getting last user created: ", error)
-            return False
