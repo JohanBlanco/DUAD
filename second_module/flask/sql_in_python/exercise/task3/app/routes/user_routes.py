@@ -10,10 +10,11 @@ def user_routes(service:UserService):
         response = service.create_user(body)
         return jsonify(response), 201
     
-    @bp.patch("/users/<int:id>")
-    def update_user(id:int):
+    
+    @bp.patch("/users/<int:id>/status")
+    def update_user_status(id:int):
         body = request.json
-        response = service.update_user(body, id)
+        response = service.update_user_status(body, id)
         return jsonify(response), 200
     
     @bp.get("/users")

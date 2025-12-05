@@ -50,7 +50,7 @@ class UserRepository():
             results = self.db_manager.execute_query(
                 "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
                 "FROM lyfter_car_rental.users " \
-                f"WHERE email = %s;",
+                f"WHERE id = %s;",
                 value
                 )
             
@@ -81,18 +81,18 @@ class UserRepository():
         except Exception as error:
             raise Exception(f"Error getting a user from the database: {error}")
 
-    def update(self, id, first_name, last_name, email, username, password, birthdate, status):
+    def update_user_status(self, id, status):
         try:
             self.db_manager.execute_query(
                 "UPDATE lyfter_car_rental.users " \
-                "SET (first_name, last_name, email, username, password, birthdate, status) = (%s, %s, %s,%s, %s, %s,%s) " \
-                "WHERE ID = %s;",
-                first_name, last_name, email, username, password, birthdate, status, id
+                "SET status = %s " \
+                "WHERE id = %s;",
+                status, id
                 )
             print("User updated successfully")
             return True
         except Exception as error:
-            print("Error updating a user from the database: ", error)
+            print("Error updating a user status from the database: ", error)
             return False
         
     def get_columns(self):

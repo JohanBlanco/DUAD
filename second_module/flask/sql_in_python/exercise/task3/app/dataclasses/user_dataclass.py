@@ -11,7 +11,9 @@ class User:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(**data)
+        valid_keys = cls().__dict__.keys()
+        filtered = {k: v for k, v in data.items() if k in valid_keys}
+        return cls(**filtered)
 
     @classmethod
     def convert_list_to_dict(cls, _list):

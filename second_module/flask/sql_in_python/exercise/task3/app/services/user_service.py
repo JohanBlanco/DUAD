@@ -7,16 +7,25 @@ class UserService:
         self.repo = repo
 
     def create_user(self, data):
-        # raises an exception if a field is missing
+
+        body_fields = set(data.keys())
+
+        required_fields = set(self.repo.get_columns())
+        required_fields.remove('id')
+
+        if not (required_fields.issuperset(body_fields) and len(required_fields) == len(body_fields)):
+            missing_fields  = required_fields.difference(body_fields)
+            raise BadRequestError(f"The following fields missing: {', '.join(missing_fields)}")
+
+        values = [str(value).strip() for value in data.values()]
+        if "" in values:
+            raise BadRequestError("There some empty fileds")
+        
         user:User = User.from_dict(data)
 
         already_existing_user = self.repo.get_by_email(user.email)
         if already_existing_user.id:
-            raise BadRequestError(f'Already exist an user with the email {user.email}')
-
-        values = [str(value).strip() for value in user.__dict__.values()]
-        if "" in values:
-            raise BadRequestError("There some empty fileds")
+            raise BadRequestError(f'Already exist the user with the email {user.email}')
         
         self.repo.create(user.first_name, user.last_name, user.email,
                                 user.username, user.password, user.birthdate, user.status)
@@ -25,22 +34,21 @@ class UserService:
         
         return user.__dict__
     
-    #CONTINUE
-    def update_user(self, data, id):
-        # validate business rules
-        user:User = User.from_dict(data)
+    def update_user_status(self, data, id):
 
-        if user.id:
-            raise BadRequestError(f'The id cannot be updated')
+        user = self.repo.get_by_id(id)
+        if not user:
+            raise BadRequestError(f'The user with the id = {id} does not exist')
 
-        values = [str(value).strip() for value in user.__dict__.values()]
-        if "" in values:
-            raise BadRequestError("There some empty fileds")
+        if 'status' not in data:
+            raise BadRequestError(f"The following fields are required: status")
+
+        if not user.status or str(user.status) == '':
+            raise BadRequestError("There status cannot be empty or null")
         
-        self.repo.update(user.first_name, user.last_name, user.email,
-                                user.username, user.password, user.birthdate, user.status)
-        
-        user = self.repo.get_by_email(user.email)
+        user.status = data['status']
+        self.repo.update_user_status(user.id, user.status)
+        user = self.repo.get_by_id(id)
         
         return user.__dict__
     
@@ -62,5 +70,3 @@ class UserService:
             results = self.repo.get_all()
 
         return [user.__dict__ for user in results]
-    
-    
