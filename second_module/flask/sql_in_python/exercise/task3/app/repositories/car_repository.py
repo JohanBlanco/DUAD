@@ -1,41 +1,40 @@
 from app.db.pg_manager import PgManager
 from app.dataclasses.user_dataclass import User
 
-class UserRepository():
+class CarRepository():
     def __init__(self, db_manager:PgManager):
         self.db_manager = db_manager
 
-    def create(self, first_name, last_name, email, username, password, birthdate, status):
+    def create(self, vin, make, model, year, status):
         try:
             self.db_manager.execute_query(
-                "INSERT INTO lyfter_car_rental.users "
-                "(first_name, last_name, email, username, password, birthdate, status) " \
+                "INSERT INTO lyfter_car_rental.cars "
+                "(vin, make, model, year, status) " \
                 "VALUES (%s, %s, %s, %s, %s, %s, %s);", 
-                first_name, last_name, email, username, password, birthdate, status
+                vin, make, model, year, status
                 )
 
             print("User inserted successfully")
-        except Exception as error:
-            raise Exception("Error creating the user: ", error)
+        except Exception as error:  
+            raise Exception(f"Error creating the car: {error}")
 
     def get_all(self):
         try:
             results = self.db_manager.execute_query(
-                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
-                "FROM lyfter_car_rental.users;"
+                "SELECT * " \
+                "FROM lyfter_car_rental.cars;"
             )
 
             results = [User.from_dict(_dict) for _dict in results]
 
             return results
         except Exception as error:
-            raise Exception("Error getting all users from the database: ", error)
-
+            raise Exception(f"Error getting all cars from the database: {error}")
     def get_by_column(self, column, value):
         try:
             results = self.db_manager.execute_query(
-                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
-                "FROM lyfter_car_rental.users " \
+                "SELECT * " \
+                "FROM lyfter_car_rental.cars " \
                 f"WHERE {column} = %s;",
                 value
                 )
@@ -49,8 +48,8 @@ class UserRepository():
     def get_by_id(self, value):
         try:
             results = self.db_manager.execute_query(
-                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
-                "FROM lyfter_car_rental.users " \
+                "SELECT * " \
+                "FROM lyfter_car_rental.cars " \
                 f"WHERE id = %s;",
                 value
                 )
@@ -64,12 +63,12 @@ class UserRepository():
         except Exception as error:
             raise Exception(f"Error getting a user from the database: {error}")
         
-    def get_by_email(self, value):
+    def get_by_vin(self, value):
         try:
             results = self.db_manager.execute_query(
-                "SELECT id, first_name, last_name, email, username, password, TO_CHAR(birthdate, 'YYYY-MM-DD') AS birthdate, status " \
-                "FROM lyfter_car_rental.users " \
-                f"WHERE email = %s;",
+                "SELECT * " \
+                "FROM lyfter_car_rental.cars " \
+                f"WHERE vin = %s;",
                 value
                 )
             
@@ -82,10 +81,10 @@ class UserRepository():
         except Exception as error:
             raise Exception(f"Error getting a user from the database: {error}")
 
-    def update_user_status(self, id, status):
+    def update_car_status(self, id, status):
         try:
             self.db_manager.execute_query(
-                "UPDATE lyfter_car_rental.users " \
+                "UPDATE lyfter_car_rental.cars " \
                 "SET status = %s " \
                 "WHERE id = %s;",
                 status, id
@@ -94,13 +93,13 @@ class UserRepository():
             return True
         except Exception as error:
             raise Exception(f"Error updating a user status from the database: {error}")
-
+        
     def get_columns(self):
         try:
             query = "SELECT column_name as columns " \
                     "FROM information_schema.columns " \
                     "WHERE table_schema = 'lyfter_car_rental' " \
-                    "AND table_name   = 'users';"
+                    "AND table_name   = 'cars';"
             
             results = self.db_manager.execute_query(query)
             print("Got the columns successfuly")

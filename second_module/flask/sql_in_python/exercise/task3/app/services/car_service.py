@@ -1,12 +1,12 @@
-from app.repositories.user_repository import UserRepository
-from app.dataclasses.user_dataclass import User
+from app.repositories.car_repository import CarRepository
+from app.dataclasses.car_dataclass import Car
 from app.helpers.exceptions import BadRequestError
 
-class UserService:
-    def __init__(self, repo: UserRepository):
+class CarService:
+    def __init__(self, repo: CarRepository):
         self.repo = repo
 
-    def create_user(self, data):
+    def create_car(self, data):
 
         body_fields = set(data.keys())
 
@@ -21,38 +21,37 @@ class UserService:
         if "" in values:
             raise BadRequestError("There some empty fileds")
         
-        user:User = User.from_dict(data)
+        car:Car = Car.from_dict(data)
 
-        already_existing_user = self.repo.get_by_email(user.email)
-        if already_existing_user.id:
-            raise BadRequestError(f'Already exist the user with the email {user.email}')
+        already_existing_car = self.repo.get_by_email(car.email)
+        if already_existing_car.id:
+            raise BadRequestError(f'Already exist the car with the vin {car.email}')
         
-        self.repo.create(user.first_name, user.last_name, user.email,
-                                user.username, user.password, user.birthdate, user.status)
+        self.repo.create(car.vin, car.make, car.model, car.year, car.status)
         
-        user = self.repo.get_by_email(user.email)
+        car = self.repo.get_by_vin(car.vin)
         
-        return user.__dict__
+        return car.__dict__
     
-    def update_user_status(self, data, id):
+    def update_car_status(self, data, id):
 
-        user = self.repo.get_by_id(id)
-        if not user:
-            raise BadRequestError(f'The user with the id {id} does not exist')
+        car = self.repo.get_by_id(id)
+        if not car:
+            raise BadRequestError(f'The car with the id {id} does not exist')
 
         if 'status' not in data:
             raise BadRequestError(f"The following fields are required in the body: status")
 
-        if not user.status or str(user.status) == '':
+        if not car.status or str(car.status) == '':
             raise BadRequestError("The status cannot be empty or null")
         
-        user.status = data['status']
-        self.repo.update_user_status(user.id, user.status)
-        user = self.repo.get_by_id(id)
+        car.status = data['status']
+        self.repo.update_car_status(car.id, car.status)
+        car = self.repo.get_by_id(id)
         
-        return user.__dict__
+        return car.__dict__
     
-    def get_users(self, filters:dict):
+    def get_cars(self, filters:dict):
         # validate business rules
         results = {}
 
@@ -69,4 +68,4 @@ class UserService:
         else:
             results = self.repo.get_all()
 
-        return [user.__dict__ for user in results]
+        return [car.__dict__ for car in results]

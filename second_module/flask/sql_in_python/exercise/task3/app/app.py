@@ -3,9 +3,16 @@ from flask import Flask
 from dotenv import load_dotenv
 
 from app.db.pg_manager import PgManager
+
 from app.routes.user_routes import user_routes
+from app.routes.car_routes import car_routes
+
 from app.services.user_service import UserService
+from app.services.car_service import CarService
+
 from app.repositories.user_repository import UserRepository
+from app.repositories.car_repository import CarRepository
+
 from app.helpers.handlers import register_error_handlers
 from app.helpers.db_hooks import register_db_hooks
 
@@ -29,21 +36,25 @@ def create_app():
     #  Repositories
     # ---------------------------
     user_repository = UserRepository(db_manager)
+    car_repository = CarRepository(db_manager)
 
     # ---------------------------
     #  Services
     # ---------------------------
     user_service = UserService(user_repository)
+    car_service = CarService(user_repository)
 
     # ---------------------------
     #  Blueprints / Routes
     # ---------------------------
     user_blueprint = user_routes(user_service)
+    car_blueprint = car_routes(user_service)
 
     # ---------------------------
     #  Register Blueprints/Routes
     # ---------------------------
     app.register_blueprint(user_blueprint)
+    app.register_blueprint(car_blueprint)
 
     # ---------------------------
     #  Error Handlers & Teardowns
