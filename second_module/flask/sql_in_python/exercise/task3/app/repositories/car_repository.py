@@ -1,5 +1,5 @@
 from app.db.pg_manager import PgManager
-from app.dataclasses.user_dataclass import User
+from app.dataclasses.car_dataclass import Car
 
 class CarRepository():
     def __init__(self, db_manager:PgManager):
@@ -10,7 +10,7 @@ class CarRepository():
             self.db_manager.execute_query(
                 "INSERT INTO lyfter_car_rental.cars "
                 "(vin, make, model, year, status) " \
-                "VALUES (%s, %s, %s, %s, %s, %s, %s);", 
+                "VALUES (%s, %s, %s, %s, %s);", 
                 vin, make, model, year, status
                 )
 
@@ -25,7 +25,7 @@ class CarRepository():
                 "FROM lyfter_car_rental.cars;"
             )
 
-            results = [User.from_dict(_dict) for _dict in results]
+            results = [Car.from_dict(_dict) for _dict in results]
 
             return results
         except Exception as error:
@@ -39,7 +39,7 @@ class CarRepository():
                 value
                 )
             
-            results = [User.from_dict(_dict) for _dict in results]
+            results = [Car.from_dict(_dict) for _dict in results]
 
             return results
         except Exception as error:
@@ -55,13 +55,13 @@ class CarRepository():
                 )
             
             if results:
-                user = User.from_dict(results[0])
+                user = Car.from_dict(results[0])
             else:
-                user = None
+                raise Exception(f"The car with id {value} does not exist")
             
             return user
         except Exception as error:
-            raise Exception(f"Error getting a user from the database: {error}")
+            return None
         
     def get_by_vin(self, value):
         try:
@@ -73,9 +73,9 @@ class CarRepository():
                 )
             
             if results:
-                user = User.from_dict(results[0])
+                user = Car.from_dict(results[0])
             else:
-                user = User()
+                return None
             
             return user
         except Exception as error:

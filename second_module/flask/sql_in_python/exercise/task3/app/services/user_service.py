@@ -24,7 +24,7 @@ class UserService:
         user:User = User.from_dict(data)
 
         already_existing_user = self.repo.get_by_email(user.email)
-        if already_existing_user.id:
+        if already_existing_user:
             raise BadRequestError(f'Already exist the user with the email {user.email}')
         
         self.repo.create(user.first_name, user.last_name, user.email,

@@ -58,11 +58,11 @@ class UserRepository():
             if results:
                 user = User.from_dict(results[0])
             else:
-                user = None
+                return None
             
             return user
         except Exception as error:
-            raise Exception(f"Error getting a user from the database: {error}")
+            return User()
         
     def get_by_email(self, value):
         try:
@@ -76,7 +76,7 @@ class UserRepository():
             if results:
                 user = User.from_dict(results[0])
             else:
-                user = User()
+                return None
             
             return user
         except Exception as error:

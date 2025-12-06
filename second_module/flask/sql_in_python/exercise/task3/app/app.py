@@ -42,13 +42,13 @@ def create_app():
     #  Services
     # ---------------------------
     user_service = UserService(user_repository)
-    car_service = CarService(user_repository)
+    car_service = CarService(car_repository)
 
     # ---------------------------
     #  Blueprints / Routes
     # ---------------------------
     user_blueprint = user_routes(user_service)
-    car_blueprint = car_routes(user_service)
+    car_blueprint = car_routes(car_service)
 
     # ---------------------------
     #  Register Blueprints/Routes

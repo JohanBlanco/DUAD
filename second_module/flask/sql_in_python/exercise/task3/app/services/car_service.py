@@ -23,9 +23,15 @@ class CarService:
         
         car:Car = Car.from_dict(data)
 
-        already_existing_car = self.repo.get_by_email(car.email)
-        if already_existing_car.id:
-            raise BadRequestError(f'Already exist the car with the vin {car.email}')
+        if not isinstance(car.year, int):
+            raise BadRequestError('The year must be an integer value')
+        
+        if car.year < 1900:
+            raise BadRequestError('The year must be greater or queal to 1900')
+        
+        already_existing_car = self.repo.get_by_vin(car.vin)
+        if already_existing_car:
+            raise BadRequestError(f'Already exist the car with the vin {car.vin}')
         
         self.repo.create(car.vin, car.make, car.model, car.year, car.status)
         
