@@ -38,10 +38,10 @@ class UserService:
 
         user = self.repo.get_by_id(id)
         if not user:
-            raise BadRequestError(f'The user with the id = {id} does not exist')
+            raise BadRequestError(f'The user with the id {id} does not exist')
 
         if 'status' not in data:
-            raise BadRequestError(f"The following fields are required: status")
+            raise BadRequestError(f"The following fields are required in the body: status")
 
         if not user.status or str(user.status) == '':
             raise BadRequestError("There status cannot be empty or null")

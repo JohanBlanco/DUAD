@@ -57,7 +57,7 @@ class UserRepository():
             if results:
                 user = User.from_dict(results[0])
             else:
-                user = User()
+                user = None
             
             return user
         except Exception as error:
