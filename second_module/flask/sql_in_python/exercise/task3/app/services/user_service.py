@@ -53,7 +53,6 @@ class UserService:
         return user.__dict__
     
     def get_users(self, filters:dict):
-        # validate business rules
         results = {}
 
         if filters:
@@ -61,7 +60,6 @@ class UserService:
             
             allowed_columns:dict = self.repo.get_columns()
             if column not in allowed_columns and column != 'password':
-                # change this for a better exception
                 raise BadRequestError(f"The filter {column} is not valid")
                 
             results = self.repo.get_by_column(column, value)

@@ -2,7 +2,7 @@
 -- colocando el auto como disponible y completando el estado del alquiler
 UPDATE lyfter_car_rental.rents
 set status  = 'Completed'
-where car_id = 51 and user_id = 51 and rent_date = '2025-12-01';
+where id = 51;
 
 UPDATE lyfter_car_rental.cars
 set status  = 'available'

@@ -97,12 +97,12 @@ class UserRepository():
 
     def get_columns(self):
         try:
-            query = "SELECT column_name as columns " \
-                    "FROM information_schema.columns " \
-                    "WHERE table_schema = 'lyfter_car_rental' " \
-                    "AND table_name   = 'users';"
-            
-            results = self.db_manager.execute_query(query)
+            results = self.db_manager.execute_query(
+                "SELECT column_name as columns " \
+                "FROM information_schema.columns " \
+                "WHERE table_schema = 'lyfter_car_rental' " \
+                "AND table_name   = 'users';"
+            )
             print("Got the columns successfuly")
             results = [item["columns"] for item in results]
             return results
