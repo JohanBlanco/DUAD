@@ -8,5 +8,4 @@ where r.status = 'Active' and c.status = 'rented';
 select c.make, c.model, c.year, c.status, r.id, r.status
 from lyfter_car_rental.cars c
 left join lyfter_car_rental.rents r on c.id = r.car_id
-where r.id is NULL and c.status = 'available' or r.status != 'Active' and c.status = 'available';
-
+where r.id is NULL and c.status = 'available' or r.status != 'Active';

@@ -22,5 +22,10 @@ def rent_routes(service:RentService):
         filters = request.args.to_dict()
         response = service.get_rents(filters)
         return jsonify(response), 200
+    
+    @bp.patch("/rents/<int:id>/complete")
+    def mark_rent_as_completed(id: int):
+        response = service.mark_rent_as_completed(id)
+        return jsonify(response), 200
 
     return bp

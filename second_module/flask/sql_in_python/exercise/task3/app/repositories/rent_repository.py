@@ -105,3 +105,17 @@ class RentRepository():
             return results
         except Exception as error:
             raise Exception(f"Error getting the columns from the table {error}")
+        
+    
+    def get_rented_cars(self):
+        try:
+            results = self.db_manager.execute_query(
+                "select r.car_id " \
+                "from lyfter_car_rental.cars c " \
+                "join lyfter_car_rental.rents  r on c.id = r.car_id " \
+                "where r.status = 'Active' and c.status = 'rented';"
+            )
+            print("Got the rented_cars_successfully")
+            return [item['car_id'] for item in results]
+        except Exception as error:
+            raise Exception(f"Error getting the columns from the table {error}")

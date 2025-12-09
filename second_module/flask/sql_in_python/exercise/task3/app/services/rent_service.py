@@ -2,10 +2,14 @@ from app.repositories.rent_repository import RentRepository
 from app.dataclasses.rent_dataclass import Rent
 from app.helpers.exceptions import BadRequestError
 from datetime import date
+from app.services.car_service import CarService
+from app.services.user_service import UserService
 
 class RentService:
-    def __init__(self, repo: RentRepository):
+    def __init__(self, repo: RentRepository, car_service:CarService, user_service:UserService):
         self.repo = repo
+        self.car_service = car_service
+        self.user_service = user_service
 
     def create_rent(self, data):
 
@@ -14,6 +18,7 @@ class RentService:
         required_fields = set(self.repo.get_columns())
         required_fields.remove('id')
         required_fields.remove('rent_date')
+        required_fields.remove('status')
 
         if not (required_fields.issuperset(body_fields) and len(required_fields) == len(body_fields)):
             missing_fields  = required_fields.difference(body_fields)
@@ -21,19 +26,25 @@ class RentService:
 
         values = [str(value).strip() for value in data.values()]
         if "" in values:
-            raise BadRequestError("There some empty fileds")
+            raise BadRequestError("The are some empty fileds")
         
         rent:Rent = Rent.from_dict(data)
 
         if not isinstance(rent.car_id, int) or not isinstance(rent.car_id, int):
             raise BadRequestError('The car id and user id must be integer values')
 
-        # Validate the car is not in use
+        rented_cars = self.repo.get_rented_cars()
+        if rent.car_id in rented_cars:
+            raise BadRequestError('The car is already rented')
         
-        self.repo.create(rent.status, rent.car_id, rent.user_id)
+        if not rent.status:
+            rent.status = 'Active'
         
+        self.repo.create(status=rent.status, car_id=rent.car_id, user_id=rent.user_id)
         rent_id = self.repo.get_last_record_id()
-        rent = self.repo.get_by_id(rent_id)
+        rent:Rent = self.repo.get_by_id(rent_id)
+
+        self.car_service.update_car_status({'status': 'rented'}, rent.car_id)
         
         return rent.to_dict()
     
@@ -70,3 +81,13 @@ class RentService:
             results = self.repo.get_all()
 
         return Rent.convert_list_to_dict(results)
+    
+
+    def mark_rent_as_completed(self, rent_id):
+        rent = self.repo.get_by_id(rent_id)
+
+        self.update_rent_status(id=rent_id, data={'status': 'Completed'})
+        self.car_service.update_car_status(id=rent.car_id, data={'status': 'available'})
+
+        return self.repo.get_by_id(rent_id).to_dict()
+

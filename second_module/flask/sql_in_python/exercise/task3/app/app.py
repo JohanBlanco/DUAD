@@ -47,7 +47,7 @@ def create_app():
     # ---------------------------
     user_service = UserService(user_repository)
     car_service = CarService(car_repository)
-    rent_service = RentService(rent_repository)
+    rent_service = RentService(rent_repository, car_service, user_service)
 
     # ---------------------------
     #  Blueprints / Routes
