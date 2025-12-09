@@ -37,7 +37,7 @@ class CarService:
         
         car = self.repo.get_by_vin(car.vin)
         
-        return car.__dict__
+        return car.to_dict()
     
     def update_car_status(self, data, id):
 
@@ -55,7 +55,7 @@ class CarService:
         self.repo.update_car_status(car.id, car.status)
         car = self.repo.get_by_id(id)
         
-        return car.__dict__
+        return car.to_dict()
     
     def get_cars(self, filters:dict):
         results = {}
@@ -64,7 +64,7 @@ class CarService:
             column, value = next(iter(filters.items()))
             
             allowed_columns:dict = self.repo.get_columns()
-            if column not in allowed_columns and column != 'password':
+            if column not in allowed_columns:
                 raise BadRequestError(f"The filter {column} is not valid")
                 
             results = self.repo.get_by_column(column, value)
@@ -72,4 +72,4 @@ class CarService:
         else:
             results = self.repo.get_all()
 
-        return [car.__dict__ for car in results]
+        return Car.convert_list_to_dict(results)

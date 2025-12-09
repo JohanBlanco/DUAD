@@ -64,7 +64,20 @@ class RentRepository():
             
             return user
         except Exception as error:
-            return None
+            raise Exception(f"Error getting a user from the database: {error}")
+        
+    def get_last_record_id(self):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT max(id) last_id FROM lyfter_car_rental.rents;"
+                )
+            
+            if results:
+                return results[0]['last_id']
+            else:
+                raise Exception(f"Error getting a user from the database: {error}")
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
 
     def update_rent_status(self, id, status):
         try:

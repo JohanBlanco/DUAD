@@ -32,7 +32,7 @@ class UserService:
         
         user = self.repo.get_by_email(user.email)
         
-        return user.__dict__
+        return user.to_dict()
     
     def update_user_status(self, data, id):
 
@@ -50,7 +50,7 @@ class UserService:
         self.repo.update_user_status(user.id, user.status)
         user = self.repo.get_by_id(id)
         
-        return user.__dict__
+        return user.to_dict()
     
     def get_users(self, filters:dict):
         results = {}
@@ -67,4 +67,4 @@ class UserService:
         else:
             results = self.repo.get_all()
 
-        return [user.__dict__ for user in results]
+        return User.convert_list_to_dict(results)

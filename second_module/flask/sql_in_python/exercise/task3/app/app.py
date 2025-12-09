@@ -6,12 +6,15 @@ from app.db.pg_manager import PgManager
 
 from app.routes.user_routes import user_routes
 from app.routes.car_routes import car_routes
+from app.routes.rent_routes import rent_routes
 
 from app.services.user_service import UserService
 from app.services.car_service import CarService
+from app.services.rent_service import RentService
 
 from app.repositories.user_repository import UserRepository
 from app.repositories.car_repository import CarRepository
+from app.repositories.rent_repository import RentRepository
 
 from app.helpers.handlers import register_error_handlers
 from app.helpers.db_hooks import register_db_hooks
@@ -37,24 +40,28 @@ def create_app():
     # ---------------------------
     user_repository = UserRepository(db_manager)
     car_repository = CarRepository(db_manager)
+    rent_repository = RentRepository(db_manager)
 
     # ---------------------------
     #  Services
     # ---------------------------
     user_service = UserService(user_repository)
     car_service = CarService(car_repository)
+    rent_service = RentService(rent_repository)
 
     # ---------------------------
     #  Blueprints / Routes
     # ---------------------------
     user_blueprint = user_routes(user_service)
     car_blueprint = car_routes(car_service)
+    rent_blueprint = rent_routes(rent_service)
 
     # ---------------------------
     #  Register Blueprints/Routes
     # ---------------------------
     app.register_blueprint(user_blueprint)
     app.register_blueprint(car_blueprint)
+    app.register_blueprint(rent_blueprint)
 
     # ---------------------------
     #  Error Handlers & Teardowns

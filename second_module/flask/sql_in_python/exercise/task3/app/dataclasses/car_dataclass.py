@@ -16,4 +16,7 @@ class Car:
     @classmethod
     def convert_list_to_dict(cls, _list):
         return [item.__dict__ for item in _list]
+    
+    def to_dict(self):
+        return self.__dict__
 

@@ -1,7 +1,8 @@
 class Rent:
-    def __init__(self, id=None, status="", car_id=None, user_id=None):
+    def __init__(self, id=None, rent_date = None, status="", car_id=None, user_id=None):
         self.id = id
         self.status = status
+        self.rent_date = rent_date
         self.car_id = car_id
         self.user_id = user_id
 
@@ -14,3 +15,6 @@ class Rent:
     @classmethod
     def convert_list_to_dict(cls, _list):
         return [item.__dict__ for item in _list]
+    
+    def to_dict(self):
+        return self.__dict__

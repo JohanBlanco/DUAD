@@ -13,6 +13,7 @@ class RentService:
 
         required_fields = set(self.repo.get_columns())
         required_fields.remove('id')
+        required_fields.remove('rent_date')
 
         if not (required_fields.issuperset(body_fields) and len(required_fields) == len(body_fields)):
             missing_fields  = required_fields.difference(body_fields)
@@ -31,9 +32,10 @@ class RentService:
         
         self.repo.create(rent.status, rent.car_id, rent.user_id)
         
-        rent = self.repo.get_by_email(rent.car_id, rent.user_id, date.today())
+        rent_id = self.repo.get_last_record_id()
+        rent = self.repo.get_by_id(rent_id)
         
-        return rent.__dict__
+        return rent.to_dict()
     
     def update_rent_status(self, data, id):
 
@@ -51,15 +53,20 @@ class RentService:
         self.repo.update_rent_status(rent.id, rent.status)
         rent = self.repo.get_by_id(id)
         
-        return rent.__dict__
+        return rent.to_dict()
     
     def get_rents(self, filters:dict):
         results = {}
 
         if filters:
-            column, value = next(iter(filters.items()))    
+            column, value = next(iter(filters.items()))  
+
+            allowed_columns:dict = self.repo.get_columns()
+            if column not in allowed_columns:
+                raise BadRequestError(f"The filter {column} is not valid")
+
             results = self.repo.get_by_column(column, value)        
         else:
             results = self.repo.get_all()
 
-        return [rent.__dict__ for rent in results]
+        return Rent.convert_list_to_dict(results)
