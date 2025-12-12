@@ -1,0 +1,121 @@
+from app.db.pg_manager import PgManager
+from app.dataclasses.rent_dataclass import Rent
+
+class RentRepository():
+    def __init__(self, db_manager:PgManager):
+        self.db_manager = db_manager
+
+    def create(self, status, car_id, user_id):
+        try:
+            self.db_manager.execute_query(
+                "INSERT INTO lyfter_car_rental.rents "
+                "(status, car_id, user_id) " \
+                "VALUES (%s, %s, %s);", 
+                status, car_id, user_id
+                )
+
+            print("User inserted successfully")
+        except Exception as error:  
+            raise Exception(f"Error creating the rent: {error}")
+
+    def get_all(self):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT * " \
+                "FROM lyfter_car_rental.rents;"
+            )
+
+            results = [Rent.from_dict(_dict) for _dict in results]
+
+            return results
+        except Exception as error:
+            raise Exception(f"Error getting all rents from the database: {error}")
+    def get_by_column(self, column, value):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT * " \
+                "FROM lyfter_car_rental.rents " \
+                f"WHERE {column} = %s;",
+                value
+                )
+            
+            results = [Rent.from_dict(_dict) for _dict in results]
+
+            return results
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
+        
+    # CONTINUE HERE
+    # need the filter function by combined filters
+        
+    def get_by_id(self, value):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT * " \
+                "FROM lyfter_car_rental.rents " \
+                f"WHERE id = %s;",
+                value
+                )
+            
+            if results:
+                user = Rent.from_dict(results[0])
+            else:
+                raise Exception(f"The rent with id {value} does not exist")
+            
+            return user
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
+        
+    def get_last_record_id(self):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT max(id) last_id FROM lyfter_car_rental.rents;"
+                )
+            
+            if results:
+                return results[0]['last_id']
+            else:
+                raise Exception(f"Error getting a user from the database: {error}")
+        except Exception as error:
+            raise Exception(f"Error getting a user from the database: {error}")
+
+    def update_rent_status(self, id, status):
+        try:
+            self.db_manager.execute_query(
+                "UPDATE lyfter_car_rental.rents " \
+                "SET status = %s " \
+                "WHERE id = %s;",
+                status, id
+                )
+            print("User updated successfully")
+            return True
+        except Exception as error:
+            raise Exception(f"Error updating a user status from the database: {error}")
+        
+    def get_columns(self):
+        try:
+            results = self.db_manager.execute_query(
+                "SELECT column_name as columns " \
+                "FROM information_schema.columns " \
+                "WHERE table_schema = 'lyfter_car_rental' " \
+                "AND table_name   = 'rents';"
+            )
+            print("Got the columns successfuly")
+            results = [item["columns"] for item in results]
+            return results
+        except Exception as error:
+            raise Exception(f"Error getting the columns from the table {error}")
+        
+    
+    def get_rented_cars(self):
+        try:
+            results = self.db_manager.execute_query(
+                "select r.car_id " \
+                "from lyfter_car_rental.cars c " \
+                "join lyfter_car_rental.rents  r on c.id = r.car_id " \
+                "where r.status = 'Active' and c.status = 'rented';"
+            )
+            print("Got the rented_cars_successfully")
+            return [item['car_id'] for item in results]
+        except Exception as error:
+            raise Exception(f"Error getting the columns from the table {error}")
