@@ -17,7 +17,7 @@ def validate_the_table_exists_and_has_records(table_name:str):
 
     try:
         results = db_manager.execute_query(
-            f"SELECT * FROM lyfter_car_rental.{table_name};"
+            f"SELECT * FROM lyfter_car_rental.{table_name} LIMIT 1;"
         )
         
         if not results:
@@ -30,7 +30,7 @@ def validate_the_table_exists_and_has_records(table_name:str):
     return message
 
 def check_db():
-    validate_the_table_exists_and_has_records('cars')
+    validate_the_table_exists_and_has_records('table')
     validate_the_table_exists_and_has_records('users')
     validate_the_table_exists_and_has_records('rents')
 
