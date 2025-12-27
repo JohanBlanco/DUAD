@@ -11,7 +11,3 @@ if __name__ == '__main__':
     metadata_obj.create_all(engine)
     
     print("Created the tables if they did not exist")
-
-
-
-

@@ -1,8 +1,10 @@
 from sqlalchemy import MetaData, Engine
+from sqlalchemy.orm import Session
 
 class DbManager():
     def __init__(self, engine: Engine):
         self.engine = engine
+        self.session = Session(engine)
         self.metadata = MetaData()
 
     def execute_read(self, stmt):

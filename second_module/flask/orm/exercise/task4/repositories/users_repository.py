@@ -1,4 +1,4 @@
-from db_manager import DbManager
+from second_module.flask.orm.exercise.task4.db.db_manager import DbManager
 
 class UserRepository():
     def __init__(self, db_manager:DbManager):
