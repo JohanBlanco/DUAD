@@ -19,7 +19,7 @@ def create_addresses_table(metadata_obj:MetaData):
         metadata_obj,
         Column('id', Integer, primary_key=True),
         Column('full_address', String(500)),
-        user_id = Column("user_id", ForeignKey("users.id"), nullable=False),
+        Column('user_id', Integer, ForeignKey('sqlalchemy.users.id'), nullable=False),
         schema='sqlalchemy'
     )
     print("Table addresses created succesfully")
@@ -34,7 +34,7 @@ def create_cars_table(metadata_obj:MetaData):
         Column('make', String(50)),
         Column('model', String(50)), 
         Column('year', Integer),
-        user_id = Column("user_id", ForeignKey("users.id")),
+        Column('user_id', Integer, ForeignKey('sqlalchemy.users.id')),
         schema='sqlalchemy'
     )
     print("Table cars created succesfully")
