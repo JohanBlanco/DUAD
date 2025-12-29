@@ -7,7 +7,7 @@ def create_users_table(metadata_obj:MetaData):
         metadata_obj,
         Column('id', Integer, primary_key=True),
         Column('fullname', String(50)),
-        Column('email', String(100)),
+        Column('email', String(100), unique=True),
         schema='sqlalchemy'
     )
     print("Table users created succesfully")
@@ -30,7 +30,7 @@ def create_cars_table(metadata_obj:MetaData):
         'cars',
         metadata_obj,
         Column('id', Integer, primary_key=True),
-        Column('vin', String(50)),
+        Column('vin', String(50), unique=True),
         Column('make', String(50)),
         Column('model', String(50)), 
         Column('year', Integer),
