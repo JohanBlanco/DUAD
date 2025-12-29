@@ -52,12 +52,6 @@ if __name__ ==  '__main__':
     address_repository.update(id=next_address, full_address=f'Address {next_address}, updated')
     car_repository.update(id=next_car, vin=f"000{next_car}, updated", make=f"000{next_car} make, updated", model=f"000{next_car} model, updated", year=2000+next_car)
 
-    # Check The results
-    print('before delete')
-    print(user_repository.get_all())
-    print(address_repository.get_all())
-    print(car_repository.get_all())
-
     # Delete
     if len(users) > 3:
         first_address = addresses[0]['id']
@@ -68,9 +62,3 @@ if __name__ ==  '__main__':
 
         first_user = users[0]['id']
         user_repository.delete(id=first_user)
-
-        # Check The results
-        print('after delete')
-        print(user_repository.get_all())
-        print(address_repository.get_all())
-        print(car_repository.get_all())
