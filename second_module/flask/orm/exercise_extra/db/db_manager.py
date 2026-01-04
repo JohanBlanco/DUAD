@@ -1,24 +1,17 @@
-from sqlalchemy import MetaData, Engine
+from sqlalchemy import MetaData, Engine, Result
 from sqlalchemy.orm import Session
 class DbManager():
-    def __init__(self, engine: Engine):
-        self.engine = engine
+    def __init__(self, session: Session):
+        self.session = session
 
-    def add(self, object):
-        # I know this can be done, using with begin, so it is less verbouse, im just 
-        # trying to get used to the verbose structure of a transaction
-        with Session(self.engine) as session:
-            session.begin()
+    def execute_write(self, stmt, return_):
             try:
-                session.add(object)
+                result:Result = self.session.execute(stmt)
+                if return_:
+                    return result.all()
             except:
-                session.rollback()
+                self.session.rollback()
                 raise
-            else:
-                session.commit()
-
-    # CONTINUE HERE IN THE DOC Expiring / Refreshing
-    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#what-does-the-session-do
 
     def delete(self, object):
             with Session(self.engine) as session:

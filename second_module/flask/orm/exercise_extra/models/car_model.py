@@ -11,7 +11,6 @@ class Car(Base):
     model: Mapped[str] = mapped_column(nullable=False)
     
     user_id = mapped_column(
-        ForeignKey("lyfter_car_rental.users.id"),
-        nullable=False
+        ForeignKey("lyfter_car_rental.users.id")
     )
     user: Mapped["User"] = relationship(back_populates="cars")
