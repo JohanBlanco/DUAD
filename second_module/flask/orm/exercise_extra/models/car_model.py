@@ -1,9 +1,13 @@
-from base_model import *
-from user_model import User
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from models.base_model import *
+
+if TYPE_CHECKING:
+    from models.user_model import User
 
 class Car(Base):
     __tablename__ = 'cars'
-    __table_args__ = {'schema': 'lyfter_car_rental'}
+    __table_args__ = {'schema': 'sqlalchemy'}
     
     id: Mapped[int] = mapped_column(primary_key=True)
     vin: Mapped[str] = mapped_column(nullable=False, unique=True)
@@ -11,6 +15,6 @@ class Car(Base):
     model: Mapped[str] = mapped_column(nullable=False)
     
     user_id = mapped_column(
-        ForeignKey("lyfter_car_rental.users.id")
+        ForeignKey("sqlalchemy.users.id")
     )
-    user: Mapped["User"] = relationship(back_populates="cars")
+    user: Mapped["User"] = relationship("User", back_populates="cars")

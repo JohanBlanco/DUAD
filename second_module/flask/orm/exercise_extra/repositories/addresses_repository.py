@@ -13,8 +13,8 @@ class AddressRepository:
     def get_by_id(self, id: int):
         return self.session.get(Address, id)
 
-    def create(self, fullname: str, email: str) -> Address:
-        address = Address(fullname=fullname, email=email)
+    def create(self, full_address: str, user = None) -> Address:
+        address = Address(full_address=full_address, user=user)
         self.session.add(address)
         return address
 
@@ -31,3 +31,7 @@ class AddressRepository:
 
     def delete(self, address: Address):
         self.session.delete(address)
+
+    def filter_addresses(self, search: str):
+        stmt = select(Address).filter(Address.full_address.ilike(f"%{search}%"))
+        return self.session.scalars(stmt).all()

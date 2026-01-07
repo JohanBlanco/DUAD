@@ -1,21 +1,12 @@
-from sqlalchemy import MetaData, Engine, Result
-from sqlalchemy.orm import Session
+from sqlalchemy import MetaData, Engine
 class DbManager():
-    def __init__(self, session: Session):
-        self.session = session
+    def __init__(self, engine: Engine):
+        self.engine = engine
 
-    def execute_write(self, stmt, return_):
-            try:
-                result:Result = self.session.execute(stmt)
-                if return_:
-                    return result.all()
-            except:
-                self.session.rollback()
-                raise
+    def execute_read(self, stmt):
+        with self.engine.connect() as conn:
+            return conn.execute(stmt).all()
 
-    def delete(self, object):
-            with Session(self.engine) as session:
-                with session.begin():
-                    session.delete(object)
-                    # inner context calls session.commit(), if there were no exceptions
-            # outer context calls session.close()
+    def execute_write(self, stmt):
+        with self.engine.begin() as conn:
+            conn.execute(stmt)

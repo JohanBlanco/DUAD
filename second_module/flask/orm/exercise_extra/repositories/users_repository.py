@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from models.user_model import User
+from sqlalchemy import func
+from models.car_model import Car
 
 class UserRepository:
     def __init__(self, session):
@@ -8,7 +10,8 @@ class UserRepository:
 
     def get_all(self):
         stmt = select(User)
-        return self.session.scalars(stmt).all()
+        users = self.session.scalars(stmt).all()
+        return users
 
     def get_by_id(self, id: int):
         return self.session.get(User, id)
@@ -35,3 +38,12 @@ class UserRepository:
             self.session.delete(address)
 
         self.session.delete(user)
+
+    def get_users_with_more_than_one_car(self):
+        stmt = (
+            select(User)
+            .join(Car, User.id == Car.user_id)
+            .group_by(User.id)
+            .having(func.count(Car.id) > 1)
+        )
+        return self.session.scalars(stmt).all()

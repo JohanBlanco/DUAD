@@ -1,7 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from models.car_model import Car
-
 class CarRepository:
     def __init__(self, session):
         self.session:Session = session
@@ -13,8 +12,8 @@ class CarRepository:
     def get_by_id(self, id: int):
         return self.session.get(Car, id)
 
-    def create(self, fullname: str, email: str) -> Car:
-        car = Car(fullname=fullname, email=email)
+    def create(self, vin: str, make: str, model: str, user = None) -> Car:
+        car = Car(vin=vin, make=make, model=model, user=user)
         self.session.add(car)
         return car
 
@@ -31,3 +30,8 @@ class CarRepository:
 
     def delete(self, car: Car):
         self.session.delete(car)
+
+    def get_unassigned_cars(self):
+        """Return list of cars that have no assigned user (user_id IS NULL)."""
+        stmt = select(Car).where(Car.user_id.is_(None))
+        return self.session.scalars(stmt).all()
