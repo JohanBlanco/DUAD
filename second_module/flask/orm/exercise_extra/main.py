@@ -34,12 +34,12 @@ if __name__ ==  '__main__':
         print(address_repo.filter_addresses(search="Calle"))
 
     # Task2
-    # with Session(engine) as session:
-    #     user_repo = UserRepository(session=session)
+    with Session(engine) as session:
+        user_repo = UserRepository(session=session)
 
-    #     users = user_repo.get_all()
-    #     for user in users:
-    #         print(f"user id {user.id} \n cars: {len(user.cars)} \n addresses: {len(user.addresses)}\n\n")
+        users = user_repo.get_all()
+        for user in users:
+            print(f"user id {user.id} \n cars: {len(user.cars)} \n addresses: {len(user.addresses)}\n\n")
     
     # Task3
     with Session(engine) as session:
