@@ -29,8 +29,8 @@ if __name__ ==  '__main__':
         car_repo = CarRepository(session=session)
         address_repo = AddressRepository(session=session)
 
-        # print(car_repo.get_unassigned_cars())
-        # print(user_repo.get_users_with_more_than_one_car())
+        print(car_repo.get_unassigned_cars())
+        print(user_repo.get_users_with_more_than_one_car())
         print(address_repo.filter_addresses(search="Calle"))
 
     # Task2
