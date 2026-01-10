@@ -8,7 +8,7 @@ IF NOT EXISTS (
     FROM transactions.invoices
     WHERE id = 1
 ) THEN
-    RETURN;
+    RAISE EXCEPTION 'invoice does not exist';
 END IF;
 
 --     Aumentar el stock del producto en la cantidad que se compró

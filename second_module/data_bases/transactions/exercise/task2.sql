@@ -9,16 +9,16 @@ IF EXISTS (
     FROM transactions.products
     WHERE id = 1 AND units_in_stock < 1
 ) THEN
-    RETURN;
+    RAISE EXCEPTION 'Product out of stock';
 END IF;
 
 --     Validar que el usuario existe
-IF EXISTS (
+IF NOT EXISTS (
     SELECT 1
     FROM transactions.users
     WHERE id = 1
 ) THEN
-    RETURN;
+    RAISE EXCEPTION 'User does not exist';
 END IF;
 
 --     Crear la factura con el usuario relacionado
