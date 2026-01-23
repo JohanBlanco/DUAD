@@ -34,3 +34,6 @@ SET units_in_stock = units_in_stock - 1
 WHERE id = 1;
 
 COMMIT;
+
+-- CONTINUAR CON ESTA CORRECCION
+--  Ventas: Nota que en tu transacción de compra creas la factura, pero la tabla Sales (donde debería quedar registrado qué producto se vendió y a qué precio) no recibe ningún dato. Para que la transacción sea completa según el modelo que planteaste, ¿cómo podrías insertar el registro en Sales asegurándote de usar el mismo ID de la factura que se acaba de generar?
