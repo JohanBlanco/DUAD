@@ -1,3 +1,6 @@
+-- search path
+SET search_path TO transactions, public;
+
 -- Construya una transacción para realizar una compra,
 -- que debe funcionar de la siguiente manera:
 
@@ -6,7 +9,7 @@ BEGIN TRANSACTION;
 --     Validar que existe stock del producto
 IF EXISTS (
     SELECT 1
-    FROM transactions.products
+    FROM Products
     WHERE id = 1 AND units_in_stock < 1
 ) THEN
     RAISE EXCEPTION 'Product out of stock';
@@ -15,7 +18,7 @@ END IF;
 --     Validar que el usuario existe
 IF NOT EXISTS (
     SELECT 1
-    FROM transactions.users
+    FROM Users
     WHERE id = 1
 ) THEN
     RAISE EXCEPTION 'User does not exist';
