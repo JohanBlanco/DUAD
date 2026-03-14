@@ -1,9 +1,12 @@
 from flask import Blueprint, g, jsonify, request
 
+from auth_decorators import user_and_admin_allowed
+
 invoices_bp = Blueprint("invoices", __name__, url_prefix="/invoices")
 
 
 @invoices_bp.route("/user/<int:user_id>", methods=["GET"])
+@user_and_admin_allowed
 def get_invoices_by_user(user_id):
     """Consultar las facturas de un solo cliente (user_id)."""
     repo = g.invoice_repository
@@ -12,6 +15,7 @@ def get_invoices_by_user(user_id):
 
 
 @invoices_bp.route("/purchase", methods=["POST"])
+@user_and_admin_allowed
 def purchase():
     """
     Realizar una venta: se compran productos, se genera una factura y se guarda en DB.

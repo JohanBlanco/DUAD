@@ -10,7 +10,8 @@ _JWT_SECRET = os.getenv("JWT_PRIVATE_KEY", "trespatitos")
 _JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 _jwt_manager = JWT_Manager(_JWT_SECRET, algorithm=_JWT_ALGORITHM)
 
-
+# TODO:
+# - [ ] Check why the token is not allowed to access the endpoint
 def _require_user_from_token():
     """
     Helper that:
@@ -68,7 +69,7 @@ def admin_only(fn):
     return wrapper
 
 
-def user_only(fn):
+def user_and_admin_allowed(fn):
     """
     Decorator que:
     - Valida el token JWT

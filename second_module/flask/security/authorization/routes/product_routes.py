@@ -1,10 +1,13 @@
 from datetime import datetime
 from flask import Blueprint, g, jsonify, request
 
+from auth_decorators import admin_only
+
 products_bp = Blueprint("products", __name__, url_prefix="/products")
 
 
 @products_bp.route("", methods=["GET"])
+@admin_only
 def list_products():
     repo = g.product_repository
     products = repo.get_all()
@@ -12,6 +15,7 @@ def list_products():
 
 
 @products_bp.route("/<int:product_id>", methods=["GET"])
+@admin_only
 def get_product(product_id):
     repo = g.product_repository
     product = repo.get_by_id(product_id)
@@ -21,6 +25,7 @@ def get_product(product_id):
 
 
 @products_bp.route("", methods=["POST"])
+@admin_only
 def create_product():
     repo = g.product_repository
     data = request.get_json()
@@ -48,6 +53,7 @@ def create_product():
 
 
 @products_bp.route("/<int:product_id>", methods=["PUT"])
+@admin_only
 def update_product(product_id):
     repo = g.product_repository
     product = repo.get_by_id(product_id)
@@ -78,6 +84,7 @@ def update_product(product_id):
 
 
 @products_bp.route("/<int:product_id>", methods=["DELETE"])
+@admin_only
 def delete_product(product_id):
     repo = g.product_repository
     product = repo.get_by_id(product_id)

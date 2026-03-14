@@ -1,9 +1,12 @@
 from flask import Blueprint, g, jsonify, request
 
+from auth_decorators import admin_only
+
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
 
 @users_bp.route("", methods=["GET"])
+@admin_only
 def list_users():
     """Get all users."""
     users = g.user_service.get_all()
@@ -11,6 +14,7 @@ def list_users():
 
 
 @users_bp.route("/<int:user_id>", methods=["GET"])
+@admin_only
 def get_user_by_id(user_id):
     """Get user by ID."""
     user = g.user_service.get_by_id(user_id)
@@ -20,6 +24,7 @@ def get_user_by_id(user_id):
 
 
 @users_bp.route("/by-username/<username>", methods=["GET"])
+@admin_only
 def get_user_by_username(username):
     """Get user by username."""
     user = g.user_service.get_by_username(username)
@@ -29,6 +34,7 @@ def get_user_by_username(username):
 
 
 @users_bp.route("", methods=["POST"])
+@admin_only
 def create_user():
     """
     Create a new user.

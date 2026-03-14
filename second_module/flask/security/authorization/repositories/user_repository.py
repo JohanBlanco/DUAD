@@ -18,6 +18,13 @@ class UserRepository:
         stmt = select(User).where(User.username == username)
         return self.session.scalars(stmt).first()
 
+    def get_by_username_and_password(self, username: str, password: str):
+        """Returns user if credentials match, else None."""
+        user = self.get_by_username(username)
+        if not user or user.password != password:
+            return None
+        return user
+
     def create(self, username: str, password: str, role: str = "user") -> User:
         user = User(username=username, password=password, role=role)
         self.session.add(user)
