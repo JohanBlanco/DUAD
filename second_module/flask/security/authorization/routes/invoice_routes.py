@@ -8,7 +8,7 @@ invoices_bp = Blueprint("invoices", __name__, url_prefix="/invoices")
 @invoices_bp.route("/user/<int:user_id>", methods=["GET"])
 @user_and_admin_allowed
 def get_invoices_by_user(user_id):
-    """Consultar las facturas de un solo cliente (user_id)."""
+    """Get all invoices for a single customer (user_id)."""
     repo = g.invoice_repository
     invoices = repo.get_by_user_id(user_id)
     return jsonify([inv.to_dict() for inv in invoices])
@@ -18,7 +18,7 @@ def get_invoices_by_user(user_id):
 @user_and_admin_allowed
 def purchase():
     """
-    Realizar una venta: se compran productos, se genera una factura y se guarda en DB.
+    Make a sale: purchase products, generate an invoice, and persist it in the DB.
     Body: { "user_id": int, "items": [ {"product_id": int, "quantity": int}, ... ] }
     """
     invoice_repo = g.invoice_repository

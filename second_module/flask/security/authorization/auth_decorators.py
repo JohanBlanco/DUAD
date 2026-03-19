@@ -15,11 +15,12 @@ _jwt_manager = JWT_Manager(_JWT_SECRET, algorithm=_JWT_ALGORITHM)
 def _require_user_from_token():
     """
     Helper that:
-    - Lee el header Authorization: Bearer <token>
-    - Decodifica el token
-    - Obtiene el user_id del payload
-    - Verifica que el usuario exista en la BD
-    Devuelve (user, None) si todo OK, o (None, (response, status_code)) si hay error.
+    - Reads Authorization header: Bearer <token>
+    - Decodes the token
+    - Extracts the user_id from the payload
+    - Verifies the user exists in the database
+
+    Returns (user, None) on success, or (None, (response, status_code)) on failure.
     """
     auth_header = request.headers.get("Authorization", "")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -34,7 +35,7 @@ def _require_user_from_token():
     if user_id is None:
         return None, (jsonify({"error": "Token missing user identifier"}), 401)
 
-    # Usamos el UserRepository ya inyectado en g por la app
+    # Use the UserRepository injected into flask.g by the app
     user_repo = getattr(g, "user_repository", None)
     if user_repo is None:
         return None, (jsonify({"error": "User repository not available"}), 500)
@@ -48,10 +49,10 @@ def _require_user_from_token():
 
 def admin_only(fn):
     """
-    Decorator que:
-    - Valida el token JWT
-    - Verifica que el usuario exista
-    - Verifica que el rol del usuario sea 'admin'
+    Decorator that:
+    - Validates the JWT token
+    - Verifies the user exists
+    - Ensures the user's role is 'admin'
     """
 
     @wraps(fn)
@@ -71,10 +72,10 @@ def admin_only(fn):
 
 def user_and_admin_allowed(fn):
     """
-    Decorator que:
-    - Valida el token JWT
-    - Verifica que el usuario exista
-    - Verifica que el rol del usuario sea 'user' o 'admin'
+    Decorator that:
+    - Validates the JWT token
+    - Verifies the user exists
+    - Ensures the user's role is 'user' or 'admin'
     """
 
     @wraps(fn)
