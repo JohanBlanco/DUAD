@@ -24,4 +24,5 @@ class User(Base):
             "id": self.id,
             "username": self.username,
             "role": self.role,
+            "password": self.password
         }

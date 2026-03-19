@@ -3,7 +3,7 @@ import os
 from flask import Flask, g, request, jsonify, current_app
 
 from db import get_session, init_db
-from auth_decorators import user_and_admin_allowed
+from auth_decorators import *
 from repositories import ProductRepository, InvoiceRepository, UserRepository
 from services.user_service import UserService
 from routes.product_routes import products_bp
@@ -48,6 +48,7 @@ def create_app():
 app = create_app()
 
 @app.route("/liveness")
+@admin_only
 def liveness():
     return "<p>Hello, World!</p>"
 
