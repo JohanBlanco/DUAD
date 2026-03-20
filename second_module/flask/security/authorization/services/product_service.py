@@ -14,6 +14,10 @@ class ProductService:
         product = self.product_repository.get_by_id(id)
         return product.to_dict() if product else None
 
+    def get_by_name(self, name: str) -> dict | None:
+        product = self.product_repository.get_by_name(name)
+        return product.to_dict() if product else None
+
     def create(
         self,
         name: str,

@@ -1,17 +1,13 @@
 from functools import wraps
-import os
 
 from flask import request, jsonify, g
 
 from jwt_manager import JWT_Manager
 
 
-_JWT_SECRET = os.getenv("JWT_PRIVATE_KEY", "trespatitos")
-_JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-_jwt_manager = JWT_Manager(_JWT_SECRET, algorithm=_JWT_ALGORITHM)
+_jwt_manager = JWT_Manager.get_instance()
 
-# TODO:
-# - [ ] Check why the token is not allowed to access the endpoint
+
 def _require_user_from_token():
     """
     Helper that:

@@ -6,19 +6,17 @@ from db import get_session, init_db
 from auth_decorators import *
 from repositories import ProductRepository, InvoiceRepository, UserRepository
 from services.user_service import UserService
+from services.product_service import ProductService
+from services.invoice_service import InvoiceService
 from routes.product_routes import products_bp
 from routes.invoice_routes import invoices_bp
 from routes.user_routes import users_bp
 from jwt_manager import JWT_Manager
 
-
 def create_app():
     app = Flask(__name__)
     init_db()
-    app.jwt_manager = JWT_Manager(
-        os.getenv("JWT_PRIVATE_KEY", "trespatitos"),
-        algorithm=os.getenv("JWT_ALGORITHM", "HS256"),
-    )
+    app.jwt_manager = JWT_Manager.get_instance()
 
     @app.before_request
     def inject_repos():
@@ -28,6 +26,12 @@ def create_app():
         g.invoice_repository = InvoiceRepository(session)
         g.user_repository = UserRepository(session)
         g.user_service = UserService(g.user_repository)
+        g.product_service = ProductService(g.product_repository)
+        g.invoice_service = InvoiceService(
+            g.invoice_repository,
+            g.product_repository,
+            g.user_repository,
+        )
 
     @app.teardown_appcontext
     def teardown_session(exception=None):
@@ -59,10 +63,11 @@ def register():
         return jsonify({"error": "JSON body required"}), 400
     username = data.get("username")
     password = data.get("password")
-    role = data.get("role", "user")
     if not username or not password:
         return jsonify({"error": "username and password are required"}), 400
-    user = g.user_service.create(username=username, password=password, role=role)
+    if g.user_repository.get_by_username(username):
+        return jsonify({"error": "Username already exists"}), 409
+    user = g.user_service.create(username=username, password=password, role="user")
     if not user:
         return jsonify({"error": "Username already exists"}), 409
     token = current_app.jwt_manager.encode({"id": user["id"]})
@@ -95,9 +100,3 @@ def me():
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)
-
-    # TODO
-    # 1. Connect the repos to routers  <- done
-    # 2. Test Postman Collection <- done
-    # 3. Implement Authorization <- in progress
-    # 4. Create the decorators for admin_only and user_and_admin_allowed <- done

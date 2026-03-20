@@ -1,5 +1,6 @@
 from repositories.invoice_repository import InvoiceRepository
 from repositories.product_repository import ProductRepository
+from repositories.user_repository import UserRepository
 
 
 class InvoiceService:
@@ -7,9 +8,11 @@ class InvoiceService:
         self,
         invoice_repository: InvoiceRepository,
         product_repository: ProductRepository,
+        user_repository: UserRepository,
     ):
         self.invoice_repository = invoice_repository
         self.product_repository = product_repository
+        self.user_repository = user_repository
 
     def get_invoices_by_user(self, user_id: int) -> list[dict]:
         invoices = self.invoice_repository.get_by_user_id(user_id)
@@ -24,6 +27,9 @@ class InvoiceService:
         items: list of {"product_id": int, "quantity": int}.
         Returns (invoice_dict, None) on success or (None, error_message) on failure.
         """
+        if not self.user_repository.get_by_id(user_id):
+            return None, f"User {user_id} not found"
+
         if not items:
             return None, "No items to purchase"
 
